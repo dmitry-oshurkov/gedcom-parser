@@ -1,0 +1,4 @@
+syntax: glob
+.stack-work/
+.idea/
+gedcom-parser.iml
