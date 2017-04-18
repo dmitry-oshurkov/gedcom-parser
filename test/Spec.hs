@@ -125,3 +125,14 @@ main = hspec $ do
             parseEventType "WILL" `shouldBe` Will
             parseEventType "EVEN" `shouldBe` Even
             parseEventType "Event type cited in source" `shouldBe` CustomEventType
+
+
+    describe "parseResn" $ do
+        context "when value is known" $
+            it "returns the valid value" $ do
+                parseResn "locked" `shouldBe` Locked
+                parseResn "privacy" `shouldBe` Privacy
+
+        context "when value is unknown" $
+              it "throws an exception" $
+                evaluate (parseResn "abracadabra") `shouldThrow` errorCall "Unexpected RESN"
