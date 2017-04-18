@@ -100,6 +100,8 @@ parseName obj (level, tag, value) nextTags (people, families) continue
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "PAGE" = continue $ set page (read value :: Int) obj
     | tag == "EVEN" = bodyOf (justNewEvent (parseEventType value) value) level (tail nextTags) (people, families) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
+    | tag == "NOTE" && head value == '@' = bodyOf (newNote1 value) level (tail nextTags) (people, families) continue'' parseNote1 -- todo: combine parseNote1, parseNote2?
+    | tag == "NOTE" && head value /= '@' = bodyOf (newNote2 value) level (tail nextTags) (people, families) continue'' parseNote2
     | otherwise = continue obj
 -- n SOUR @<XREF:SOUR>@    /* pointer to source record */  {1:1}
 --       +2 ROLE <ROLE_IN_EVENT>  {0:1}
@@ -118,6 +120,7 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
 --     +1 <<NOTE_STRUCTURE>>  {0:M}
     where
     continue' o = continue $ set event o obj
+    continue'' o = continue $ modify notes2 (++ [o]) obj
 
 
 parseNote1 obj (level, tag, value) nextTags (people, families) continue

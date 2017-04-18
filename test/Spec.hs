@@ -58,7 +58,7 @@ main = hspec $ do
                             (2, "NOTE", "T")
                         ]
             bodyOf (newSourceCitation "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
-                `shouldBe` SourceCitation "@SOURCE1@" 42 (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing))
+                `shouldBe` SourceCitation "@SOURCE1@" 42 (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) []
 
 
     describe "parseRelationshipRole" $
