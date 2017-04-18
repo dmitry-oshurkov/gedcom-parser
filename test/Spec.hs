@@ -42,7 +42,7 @@ main = hspec $ do
                             (1, "SEX", "M")
                         ]
             bodyOf (newName "Joseph Tag /Torture/") 1 nextTags ([], []) id parseName
-                `shouldBe` Name "Joseph Tag /Torture/" "Prof." "Joseph" "Joe" "Le" "Torture" "Jr." []
+                `shouldBe` Name "Joseph Tag /Torture/" "Prof." "Joseph" "Joe" "Le" "Torture" "Jr." [] []
 
     describe "parseSourceCitation" $
         it "builds SourceCitation record" $ do
@@ -129,3 +129,16 @@ main = hspec $ do
         context "when value is unknown" $
             it "throws an exception" $
                 evaluate (parseGender "abracadabra") `shouldThrow` errorCall "Unexpected SEX"
+
+
+    describe "parseNote1" $
+        it "builds first case Note record" $ do
+            {-
+                4 NOTE @N26@
+                4 FILE ImgFile.JPG
+            -}
+            let nextTags = [
+                            (4, "FILE", "ImgFile.JPG")
+                        ]
+            bodyOf (newNote "@N26@") 4 nextTags ([], []) id parseNote1
+                `shouldBe` Note "@N26@" []

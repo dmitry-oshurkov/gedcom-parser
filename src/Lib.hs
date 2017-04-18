@@ -89,13 +89,11 @@ parseName obj (level, tag, value) nextTags (people, families) continue
     | tag == "SURN" = continue $ set surn value obj
     | tag == "NSFX" = continue $ set nsfx value obj
     | tag == "SOUR" = bodyOf (newSourceCitation value) level (tail nextTags) (people, families) continue' parseSourceCitation
+    | tag == "NOTE" && head value == '@' = bodyOf (newNote value) level (tail nextTags) (people, families) continue'' parseNote1
     | otherwise = continue obj
---         "SOUR" -> parseSourceCitation level name newSourceCitation { srccitXref = value } (tail nextTags) (people, families) continue
---       +2 <<NOTE_STRUCTURE>>  {0:M}
---       +2 <<MULTIMEDIA_LINK>>  {0:M}
---     +1 <<NOTE_STRUCTURE>>  {0:M}
     where
     continue' o = continue $ modify sourceCitations (++ [o]) obj
+    continue'' o = continue $ modify notes (++ [o]) obj
 
 
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
@@ -123,6 +121,18 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
 --     +1 <<NOTE_STRUCTURE>>  {0:M}
     where
     continue' o = continue $ set event o obj
+
+
+parseNote1 obj (level, tag, value) nextTags (people, families) continue
+    | tag == "SOUR" = bodyOf (newSourceCitation value) level (tail nextTags) (people, families) continue' parseSourceCitation
+    | otherwise = continue obj
+    where
+    continue' o = continue $ modify sourceCitations2 (++ [o]) obj
+-- NOTE_STRUCTURE: =
+--   n  NOTE [<SUBMITTER_TEXT> | <NULL>]  {1:1}
+--     +1 [ CONC | CONT ] <SUBMITTER_TEXT>  {0:M}
+--     +1 SOUR @<XREF:SOUR>@  {0:M}
+--   ]
 
 
 parseEvent obj (level, tag, value) nextTags (people, families) continue

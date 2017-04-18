@@ -22,7 +22,7 @@ instance ToJSON Gender where
     toJSON = String . pack . show
 
 instance ToJSON Name where
-    toJSON (Name value npfx givn nick spfx surn nsfx sourceCitations) =
+    toJSON (Name value npfx givn nick spfx surn nsfx sourceCitations notes) =
         object [
             "value" .= value,
             "npfx" .= npfx,
@@ -31,7 +31,8 @@ instance ToJSON Name where
             "spfx" .= spfx,
             "surn" .= surn,
             "nsfx" .= nsfx,
-            "sourceCitations" .= sourceCitations
+            "sourceCitations" .= sourceCitations,
+            "notes" .= notes
         ]
 
 instance ToJSON SourceCitation where
@@ -56,6 +57,13 @@ instance ToJSON RelationshipRole where
 
 instance ToJSON EventType where
     toJSON = String . pack . show
+
+instance ToJSON Note where
+    toJSON (Note xref sourceCitations) =
+        object [
+            "xref" .= xref,
+            "sourceCitations" .= sourceCitations
+        ]
 
 instance ToJSON Family where
     toJSON (Family xref) =

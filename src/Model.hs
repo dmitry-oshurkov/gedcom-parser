@@ -45,13 +45,11 @@ data Name = Name {
     _spfx :: String,
     _surn :: String,
     _nsfx :: String,
-    _sourceCitations :: [SourceCitation]
---       +2 <<NOTE_STRUCTURE>>  {0:M}
---       +2 <<MULTIMEDIA_LINK>>  {0:M}
---     +1 <<NOTE_STRUCTURE>>  {0:M}
+    _sourceCitations :: [SourceCitation],
+    _notes :: [Note]
 } deriving (Show, Eq)
 
-newName value = Name value "" "" "" "" "" "" []
+newName value = Name value "" "" "" "" "" "" [] []
 
 
 data SourceCitation = SourceCitation {
@@ -78,6 +76,14 @@ data RelationshipRole = Child | Husband | Wife | Mother | Father | Spouse | Cust
 data EventType = Anul | Cens | Div | Divf | Enga | Marr | Marb | Marc | Marl | Mars | Adop | Birt | Bapm | Barm | Basm | Bles | Buri | Chr | Chra | Conf | Crem | Deat | Emig | Fcom | Grad | Immi | Natu | Ordn | Reti | Prob | Will | Even | CustomEventType deriving (Show, Eq)
 
 
+data Note = Note {
+    _xref4 :: String,
+    _sourceCitations2 :: [SourceCitation]
+} deriving (Show, Eq)
+
+newNote xref = Note xref []
+
+
 data Family = Family {
     _xref3 :: String
 } deriving (Show)
@@ -85,4 +91,4 @@ data Family = Family {
 newFamily xref = Family xref
 
 
-mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Family ]
+mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family ]
