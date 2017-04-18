@@ -100,7 +100,7 @@ parseName obj (level, tag, value) nextTags (people, families) continue
 
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "PAGE" = continue $ set page (read value :: Int) obj
-    | tag == "EVEN" = bodyOf (Just (newEvent (parseEventType value) (Just value))) level (tail nextTags) (people, families) continue' parseEvent
+    | tag == "EVEN" = bodyOf (justNewEvent (parseEventType value) value) level (tail nextTags) (people, families) continue' parseEvent
     | otherwise = continue obj
         -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]
         -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
