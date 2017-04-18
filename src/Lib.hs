@@ -34,7 +34,7 @@ parseLine (level, xref, tag) nextTags (people, families)
 
 parseTopLevel (level, xref, tag) nextTags (people, families) continue
     | tag == "INDI" = bodyOf (newPerson xref) level nextTags (people, families) continue' parsePerson
-    | tag == "FAM" = bodyOf (Family tag) level nextTags (people, families) continue'' parseFamily
+    | tag == "FAM" = bodyOf (newFamily tag) level nextTags (people, families) continue'' parseFamily
     | otherwise = continue (people, families)
     where
     continue' o = continue (people ++ [o], families)

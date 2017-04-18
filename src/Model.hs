@@ -78,8 +78,10 @@ data EventType = Anul | Cens | Div | Divf | Enga | Marr | Marb | Marc | Marl | M
 
 
 data Family = Family {
-    fval :: String
+    _xref3 :: String
 } deriving (Show)
+
+newFamily xref = Family xref
 
 
 mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Family ]
