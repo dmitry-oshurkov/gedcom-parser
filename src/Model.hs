@@ -38,29 +38,20 @@ data Gender = UnknownGender | Male | Female deriving (Show, Eq)
 
 
 data Name = Name {
-    nameValue :: String,
-    nameNPFX :: String,
-    nameGIVN :: String,
-    nameNICK :: String,
-    nameSPFX :: String,
-    nameSURN :: String,
-    nameNSFX :: String,
-    nameSourceCitations :: [SourceCitation]
+    _value :: String,
+    _npfx :: String,
+    _givn :: String,
+    _nick :: String,
+    _spfx :: String,
+    _surn :: String,
+    _nsfx :: String,
+    _sourceCitations :: [SourceCitation]
 --       +2 <<NOTE_STRUCTURE>>  {0:M}
 --       +2 <<MULTIMEDIA_LINK>>  {0:M}
 --     +1 <<NOTE_STRUCTURE>>  {0:M}
 } deriving (Show, Eq)
 
-newName = Name {
-    nameValue = "",
-    nameNPFX = "",
-    nameGIVN = "",
-    nameNICK = "",
-    nameSPFX = "",
-    nameSURN = "",
-    nameNSFX = "",
-    nameSourceCitations = []
-}
+newName value = Name value "" "" "" "" "" "" []
 
 
 data SourceCitation = SourceCitation {

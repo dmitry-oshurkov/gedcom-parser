@@ -41,17 +41,8 @@ main = hspec $ do
                             (2, "NSFX", "Jr."),
                             (1, "SEX", "M")
                         ]
-            bodyOf newName { nameValue = "Joseph Tag /Torture/" } 1 nextTags ([], []) id parseName
-                `shouldBe` newName {
-                                        nameValue = "Joseph Tag /Torture/",
-                                        nameNPFX = "Prof.",
-                                        nameGIVN = "Joseph",
-                                        nameNICK = "Joe",
-                                        nameSPFX = "Le",
-                                        nameSURN = "Torture",
-                                        nameNSFX = "Jr."
-                                    }
-
+            bodyOf (newName "Joseph Tag /Torture/") 1 nextTags ([], []) id parseName
+                `shouldBe` Name "Joseph Tag /Torture/" "Prof." "Joseph" "Joe" "Le" "Torture" "Jr." []
 
     describe "parseSourceCitation" $
         it "builds SourceCitation record" $ do

@@ -43,7 +43,7 @@ parseTopLevel (level, xref, tag) nextTags (people, families) continue
 
 parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "RESN" = continue $ set resn (parseResn value) obj
-    | tag == "NAME" = bodyOf newName { nameValue = value} level (tail nextTags) (people, families) continue' parseName
+    | tag == "NAME" = bodyOf (newName value) level (tail nextTags) (people, families) continue' parseName
     | tag == "SEX" = continue $ set gender (parseGender value) obj
     | otherwise = continue obj
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
@@ -82,12 +82,12 @@ parseGender val
 
 
 parseName obj (level, tag, value) nextTags (people, families) continue
-    | tag == "NPFX" = continue obj { nameNPFX = value }
-    | tag == "GIVN" = continue obj { nameGIVN = value }
-    | tag == "NICK" = continue obj { nameNICK = value }
-    | tag == "SPFX" = continue obj { nameSPFX = value }
-    | tag == "SURN" = continue obj { nameSURN = value }
-    | tag == "NSFX" = continue obj { nameNSFX = value }
+    | tag == "NPFX" = continue $ set npfx value obj
+    | tag == "GIVN" = continue $ set givn value obj
+    | tag == "NICK" = continue $ set nick value obj
+    | tag == "SPFX" = continue $ set spfx value obj
+    | tag == "SURN" = continue $ set surn value obj
+    | tag == "NSFX" = continue $ set nsfx value obj
     | tag == "SOUR" = bodyOf newSourceCitation { srccitXref = value } level (tail nextTags) (people, families) continue' parseSourceCitation
     | otherwise = continue obj
 --         "SOUR" -> parseSourceCitation level name newSourceCitation { srccitXref = value } (tail nextTags) (people, families) continue
@@ -95,7 +95,7 @@ parseName obj (level, tag, value) nextTags (people, families) continue
 --       +2 <<MULTIMEDIA_LINK>>  {0:M}
 --     +1 <<NOTE_STRUCTURE>>  {0:M}
     where
-    continue' o = continue obj { nameSourceCitations = nameSourceCitations obj ++ [o] }
+    continue' o = continue $ modify sourceCitations (++ [o]) obj
 
 
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
