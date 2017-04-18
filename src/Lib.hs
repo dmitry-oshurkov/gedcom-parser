@@ -1,6 +1,7 @@
 module Lib where
 
 import Text.Regex.PCRE
+import Data.Label
 import Model
 
 
@@ -32,7 +33,7 @@ parseLine (level, xref, tag) nextTags (people, families)
 
 
 parseTopLevel (level, xref, tag) nextTags (people, families) continue
-    | tag == "INDI" = bodyOf newPerson { personId = xref } level nextTags (people, families) continue' parsePerson
+    | tag == "INDI" = bodyOf (newPerson xref) level nextTags (people, families) continue' parsePerson
     | tag == "FAM" = bodyOf (Family tag) level nextTags (people, families) continue'' parseFamily
     | otherwise = continue (people, families)
     where
@@ -41,9 +42,9 @@ parseTopLevel (level, xref, tag) nextTags (people, families) continue
 
 
 parsePerson obj (level, tag, value) nextTags (people, families) continue
-    | tag == "RESN" = continue obj { resn = case value of { "locked" -> Locked; "privacy" -> Privacy; _ -> error "Unexpected RESN" } }
+    | tag == "RESN" = continue $ set resn (case value of { "locked" -> Locked; "privacy" -> Privacy; _ -> error "Unexpected RESN" }) obj
     | tag == "NAME" = bodyOf newName { nameValue = value} level (tail nextTags) (people, families) continue' parseName
-    | tag == "SEX" = continue obj { gender = case value of { "M" -> Male; "F" -> Female; _ -> error "Unexpected SEX"} }
+    | tag == "SEX" = continue $ set gender (case value of { "M" -> Male; "F" -> Female; _ -> error "Unexpected SEX"}) obj
     | otherwise = continue obj
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
 --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
@@ -65,7 +66,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 RIN <AUTOMATED_RECORD_ID>  {0:1}
 --     +1 <<CHANGE_DATE>>  {0:1}
     where
-    continue' o = continue obj { names = names obj ++ [o] }
+    continue' o = continue $ modify names (++ [o]) obj
 
 
 parseName obj (level, tag, value) nextTags (people, families) continue

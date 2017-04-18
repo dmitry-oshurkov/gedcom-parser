@@ -1,11 +1,14 @@
+{-# LANGUAGE TemplateHaskell #-}
 module Model where
+
+import Data.Label
 
 
 data Person = Person {
-    personId :: String,
-    resn :: Resn,
-    names :: [Name],
-    gender :: Gender
+    _xref :: String,
+    _resn :: Resn,
+    _names :: [Name],
+    _gender :: Gender
     --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
     --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
     --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
@@ -27,12 +30,7 @@ data Person = Person {
     --     +1 <<CHANGE_DATE>>  {0:1}
 } deriving (Show)
 
-newPerson = Person {
-   personId = "",
-   resn = Free,
-   names = [],
-   gender = UnknownGender
-}
+newPerson xref = Person xref Free [] UnknownGender
 
 
 data Resn = Free | Locked | Privacy deriving (Show)
@@ -100,3 +98,6 @@ data EventType = Anul | Cens | Div | Divf | Enga | Marr | Marb | Marc | Marl | M
 data Family = Family {
     fval :: String
 } deriving (Show)
+
+
+mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Family ]

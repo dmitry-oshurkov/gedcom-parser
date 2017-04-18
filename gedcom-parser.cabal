@@ -18,6 +18,7 @@ library
   exposed-modules:     Lib, Model
   build-depends:       base >= 4.7 && < 5
                      , regex-pcre-builtin
+                     , fclabels
   default-language:    Haskell2010
 
 executable gedcom-parser-exe
