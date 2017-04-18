@@ -57,17 +57,8 @@ main = hspec $ do
                             (3, "EVEN", "Event type cited in source"),
                             (2, "NOTE", "T")
                         ]
-            bodyOf newSourceCitation { srccitXref = "@SOURCE1@" } 2 nextTags ([], []) id parseSourceCitation
-                `shouldBe` newSourceCitation {
-                                                srccitXref = "@SOURCE1@",
-                                                srccitPage = 42,
-                                                srccitEvent = Just newEvent {
-                                                    eventType = CustomEventType,
-                                                    customEventType = Just "Event type cited in source",
-                                                    eventRole = Nothing,
-                                                    customEventRole = Nothing
-                                                }
-                                             }
+            bodyOf (newSourceCitation "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
+                `shouldBe` SourceCitation "@SOURCE1@" 42 (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing))
 
 
     describe "parseRelationshipRole" $

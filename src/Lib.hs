@@ -88,7 +88,7 @@ parseName obj (level, tag, value) nextTags (people, families) continue
     | tag == "SPFX" = continue $ set spfx value obj
     | tag == "SURN" = continue $ set surn value obj
     | tag == "NSFX" = continue $ set nsfx value obj
-    | tag == "SOUR" = bodyOf newSourceCitation { srccitXref = value } level (tail nextTags) (people, families) continue' parseSourceCitation
+    | tag == "SOUR" = bodyOf (newSourceCitation value) level (tail nextTags) (people, families) continue' parseSourceCitation
     | otherwise = continue obj
 --         "SOUR" -> parseSourceCitation level name newSourceCitation { srccitXref = value } (tail nextTags) (people, families) continue
 --       +2 <<NOTE_STRUCTURE>>  {0:M}
@@ -99,8 +99,8 @@ parseName obj (level, tag, value) nextTags (people, families) continue
 
 
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
-    | tag == "PAGE" = continue obj { srccitPage = read value :: Int }
-    | tag == "EVEN" = bodyOf (Just newEvent { eventType = parseEventType value, customEventType = Just value }) level (tail nextTags) (people, families) continue' parseEvent
+    | tag == "PAGE" = continue $ set page (read value :: Int) obj
+    | tag == "EVEN" = bodyOf (Just (newEvent (parseEventType value) (Just value))) level (tail nextTags) (people, families) continue' parseEvent
     | otherwise = continue obj
         -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]
         -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
@@ -122,7 +122,7 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
 --        +2 [CONC | CONT ] <TEXT_FROM_SOURCE>  {0:M}
 --     +1 <<NOTE_STRUCTURE>>  {0:M}
     where
-    continue' o = continue obj { srccitEvent = o }
+    continue' o = continue $ set event o obj
 
 
 parseEvent obj (level, tag, value) nextTags (people, families) continue

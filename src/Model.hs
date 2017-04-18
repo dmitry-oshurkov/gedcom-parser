@@ -55,31 +55,22 @@ newName value = Name value "" "" "" "" "" "" []
 
 
 data SourceCitation = SourceCitation {
-    srccitXref :: String,
-    srccitPage :: Int,
-    srccitEvent :: Maybe Event
+    _xref2 :: String,
+    _page :: Int,
+    _event :: Maybe Event
 } deriving (Show, Eq)
 
-newSourceCitation = SourceCitation {
-    srccitXref = "",
-    srccitPage = 0,
-    srccitEvent = Nothing
-}
+newSourceCitation xref = SourceCitation xref 0 Nothing
 
 
 data Event = Event {
-    eventType :: EventType,
-    customEventType :: Maybe String,
-    eventRole :: Maybe RelationshipRole,
-    customEventRole :: Maybe String
+    _typ :: EventType,
+    _customType :: Maybe String,
+    _role :: Maybe RelationshipRole,
+    _customRole :: Maybe String
 } deriving (Show, Eq)
 
-newEvent = Event {
-    eventType = CustomEventType,
-    customEventType = Nothing,
-    eventRole = Nothing,
-    customEventRole = Nothing
-}
+newEvent typ customType = Event typ customType Nothing Nothing
 
 
 data RelationshipRole = Child | Husband | Wife | Mother | Father | Spouse | CustomRelationshipRole deriving (Show, Eq)
