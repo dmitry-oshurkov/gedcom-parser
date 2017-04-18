@@ -1,7 +1,10 @@
 module Main where
 
-import Lib
 import Data.List.Split
+import qualified Data.ByteString.Lazy.Char8 as LC
+import Data.Aeson.Encode.Pretty
+import Lib
+import JSON
 
 
 main :: IO ()
@@ -12,7 +15,8 @@ main = do
 
     let (people, families) = parseLine (head tags) (tail tags) ([], [])
 
-    mapM_ print people
-    mapM_ print families
+    LC.putStrLn . encodePretty $ families
+    LC.putStrLn . encodePretty $ people
+
     print (length people)
     print (length families)

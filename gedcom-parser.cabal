@@ -15,10 +15,12 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Lib, Model
+  exposed-modules:     Lib, Model, JSON
   build-depends:       base >= 4.7 && < 5
                      , regex-pcre-builtin
                      , fclabels
+                     , aeson
+                     , text
   default-language:    Haskell2010
 
 executable gedcom-parser-exe
@@ -28,6 +30,8 @@ executable gedcom-parser-exe
   build-depends:       base
                      , split
                      , gedcom-parser
+                     , bytestring
+                     , aeson-pretty
   default-language:    Haskell2010
 
 test-suite gedcom-parser-test
