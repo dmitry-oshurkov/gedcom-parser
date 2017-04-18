@@ -89,7 +89,8 @@ parseName obj (level, tag, value) nextTags (people, families) continue
     | tag == "SURN" = continue $ set surn value obj
     | tag == "NSFX" = continue $ set nsfx value obj
     | tag == "SOUR" = bodyOf (newSourceCitation value) level (tail nextTags) (people, families) continue' parseSourceCitation
-    | tag == "NOTE" && head value == '@' = bodyOf (newNote value) level (tail nextTags) (people, families) continue'' parseNote1
+    | tag == "NOTE" && head value == '@' = bodyOf (newNote1 value) level (tail nextTags) (people, families) continue'' parseNote1 -- todo: combine parseNote1, parseNote2?
+    | tag == "NOTE" && head value /= '@' = bodyOf (newNote2 value) level (tail nextTags) (people, families) continue'' parseNote2
     | otherwise = continue obj
     where
     continue' o = continue $ modify sourceCitations (++ [o]) obj
@@ -108,7 +109,6 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
 --         +3 [ CONC | CONT ] <TEXT_FROM_SOURCE>  {0:M}
 --     +1 QUAY <CERTAINTY_ASSESSMENT>  {0:1}
 --     +1 <<MULTIMEDIA_LINK>>  {0:M}
---     +1 <<NOTE_STRUCTURE>>  {0:M}
 
 --   |              /* Systems not using source records */
 --   n SOUR <SOURCE_DESCRIPTION>  {1:1}
@@ -125,11 +125,14 @@ parseNote1 obj (level, tag, value) nextTags (people, families) continue
     | otherwise = continue obj
     where
     continue' o = continue $ modify sourceCitations2 (++ [o]) obj
--- NOTE_STRUCTURE: =
---   n  NOTE [<SUBMITTER_TEXT> | <NULL>]  {1:1}
---     +1 [ CONC | CONT ] <SUBMITTER_TEXT>  {0:M}
---     +1 SOUR @<XREF:SOUR>@  {0:M}
---   ]
+
+parseNote2 obj (level, tag, value) nextTags (people, families) continue
+    | tag == "CONC" = continue $ modify text (++ value) obj
+    | tag == "CONT" = continue $ modify text (++ "\n" ++ value) obj
+    | tag == "SOUR" = bodyOf (newSourceCitation value) level (tail nextTags) (people, families) continue' parseSourceCitation
+    | otherwise = continue obj
+    where
+    continue' o = continue $ modify sourceCitations2 (++ [o]) obj
 
 
 parseEvent obj (level, tag, value) nextTags (people, families) continue

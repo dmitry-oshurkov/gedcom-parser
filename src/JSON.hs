@@ -59,9 +59,10 @@ instance ToJSON EventType where
     toJSON = String . pack . show
 
 instance ToJSON Note where
-    toJSON (Note xref sourceCitations) =
+    toJSON (Note xref text sourceCitations) =
         object [
             "xref" .= xref,
+            "text" .= text,
             "sourceCitations" .= sourceCitations
         ]
 

@@ -140,5 +140,30 @@ main = hspec $ do
             let nextTags = [
                             (4, "FILE", "ImgFile.JPG")
                         ]
-            bodyOf (newNote "@N26@") 4 nextTags ([], []) id parseNote1
-                `shouldBe` Note "@N26@" []
+            bodyOf (newNote1 "@N26@") 4 nextTags ([], []) id parseNote1
+                `shouldBe` Note (Just "@N26@") "" []
+
+
+    describe "parseNote2" $
+        it "builds second case Note record" $ do
+            {-
+                2 NOTE These are notes about the first NAME structure in this record. These notes are
+                    3 CONC embedded in the INDIVIDUAL record itself.
+                    3 CONT
+                    3 CONT The second name structure in this record uses all possible tags for a personal name
+                    3 CONC structure.
+                    3 CONT
+                    3 CONT NOTE: many applications are confused by two NAME structures.
+                1 SEX M
+            -}
+            let nextTags = [
+                            (3, "CONC", "embedded in the INDIVIDUAL record itself."),
+                            (3, "CONT", ""),
+                            (3, "CONT", "The second name structure in this record uses all possible tags for a personal name "),
+                            (3, "CONC", "structure."),
+                            (3, "CONT", ""),
+                            (3, "CONT", "NOTE: many applications are confused by two NAME structures."),
+                            (1, "SEX", "M")
+                        ]
+            bodyOf (newNote2 "These are notes about the first NAME structure in this record. These notes are ") 2 nextTags ([], []) id parseNote2
+                `shouldBe` Note Nothing "These are notes about the first NAME structure in this record. These notes are embedded in the INDIVIDUAL record itself.\n\nThe second name structure in this record uses all possible tags for a personal name structure.\n\nNOTE: many applications are confused by two NAME structures." []

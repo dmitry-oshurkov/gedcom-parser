@@ -77,11 +77,13 @@ data EventType = Anul | Cens | Div | Divf | Enga | Marr | Marb | Marc | Marl | M
 
 
 data Note = Note {
-    _xref4 :: String,
+    _xref4 :: Maybe String,
+    _text :: String,
     _sourceCitations2 :: [SourceCitation]
 } deriving (Show, Eq)
 
-newNote xref = Note xref []
+newNote1 xref = Note (Just xref) "" []
+newNote2 text = Note Nothing text []
 
 
 data Family = Family {
