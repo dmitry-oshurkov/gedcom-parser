@@ -31,6 +31,7 @@ executable gedcom-parser-exe
                      , split
                      , gedcom-parser
                      , bytestring
+                     , aeson
                      , aeson-pretty
   default-language:    Haskell2010
 

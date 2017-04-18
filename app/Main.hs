@@ -1,7 +1,9 @@
+{-# LANGUAGE OverloadedStrings #-}
 module Main where
 
 import Data.List.Split
 import qualified Data.ByteString.Lazy.Char8 as LC
+import Data.Aeson
 import Data.Aeson.Encode.Pretty
 import Lib
 import JSON
@@ -20,3 +22,6 @@ main = do
 
     print (length people)
     print (length families)
+
+    LC.putStrLn ""
+    LC.putStrLn $ LC.concat [ "http://jsoneditoronline.org/?json=", encode people ]
