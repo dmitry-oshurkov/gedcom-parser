@@ -34,7 +34,7 @@ newPerson xref = Person xref Free [] UnknownGender
 
 
 data Resn = Free | Locked | Privacy deriving (Show, Eq)
-data Gender = UnknownGender | Male | Female deriving (Show)
+data Gender = UnknownGender | Male | Female deriving (Show, Eq)
 
 
 data Name = Name {

@@ -44,7 +44,7 @@ parseTopLevel (level, xref, tag) nextTags (people, families) continue
 parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "RESN" = continue $ set resn (parseResn value) obj
     | tag == "NAME" = bodyOf newName { nameValue = value} level (tail nextTags) (people, families) continue' parseName
-    | tag == "SEX" = continue $ set gender (case value of { "M" -> Male; "F" -> Female; _ -> error "Unexpected SEX"}) obj
+    | tag == "SEX" = continue $ set gender (parseGender value) obj
     | otherwise = continue obj
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
 --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
@@ -73,6 +73,12 @@ parseResn val
     | val == "locked" = Locked
     | val == "privacy" = Privacy
     | otherwise = error "Unexpected RESN"
+
+
+parseGender val
+    | val == "M" = Male
+    | val == "F" = Female
+    | otherwise = error "Unexpected SEX"
 
 
 parseName obj (level, tag, value) nextTags (people, families) continue

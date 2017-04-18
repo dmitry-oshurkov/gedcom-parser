@@ -134,5 +134,16 @@ main = hspec $ do
                 parseResn "privacy" `shouldBe` Privacy
 
         context "when value is unknown" $
-              it "throws an exception" $
+            it "throws an exception" $
                 evaluate (parseResn "abracadabra") `shouldThrow` errorCall "Unexpected RESN"
+
+
+    describe "parseGender" $ do
+        context "when value is known" $
+            it "returns the valid value" $ do
+                parseGender "M" `shouldBe` Male
+                parseGender "F" `shouldBe` Female
+
+        context "when value is unknown" $
+            it "throws an exception" $
+                evaluate (parseGender "abracadabra") `shouldThrow` errorCall "Unexpected SEX"
