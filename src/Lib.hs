@@ -50,7 +50,6 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "RESN" = continue $ set resn (parseResn value) obj
     | tag == "NAME" = bodyOf' (newName value) continue' parseName
     | tag == "SEX" = continue $ set gender (parseGender value) obj
-    | otherwise = continue obj
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
 --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
 --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
@@ -61,7 +60,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 ALIA @<XREF:INDI>@  {0:M}
 --     +1 ANCI @<XREF:SUBM>@  {0:M}
 --     +1 DESI @<XREF:SUBM>@  {0:M}
---     +1 <<SOURCE_CITATION>>  {0:M}
+    | tag == "SOUR" = bodyOf' (newSourceCitation value) continue'' parseSourceCitation
 --     +1 <<MULTIMEDIA_LINK>>  {0:M}
 --     +1 <<NOTE_STRUCTURE>>  {0:M}
 --     +1 RFN <PERMANENT_RECORD_FILE_NUMBER>  {0:1}
@@ -70,8 +69,15 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --       +2 TYPE <USER_REFERENCE_TYPE>  {0:1}
 --     +1 RIN <AUTOMATED_RECORD_ID>  {0:1}
 --     +1 <<CHANGE_DATE>>  {0:1}
+    | otherwise = continue obj
     where
+    hasXref = head value == '@'
+    hasText = head value /= '@'
+    newSourceCitation
+        | hasXref = newSourceCitation1
+        | hasText = newSourceCitation2
     continue' o = continue $ modify names (++ [o]) obj
+    continue'' o = continue $ modify sourceCitations3 (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 

@@ -8,7 +8,7 @@ data Person = Person {
     _xref :: String,
     _resn :: Resn,
     _names :: [Name],
-    _gender :: Gender
+    _gender :: Gender,
     --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
     --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
     --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
@@ -19,7 +19,7 @@ data Person = Person {
     --     +1 ALIA @<XREF:INDI>@  {0:M}
     --     +1 ANCI @<XREF:SUBM>@  {0:M}
     --     +1 DESI @<XREF:SUBM>@  {0:M}
-    --     +1 <<SOURCE_CITATION>>  {0:M}
+    _sourceCitations3 :: [SourceCitation]
     --     +1 <<MULTIMEDIA_LINK>>  {0:M}
     --     +1 <<NOTE_STRUCTURE>>  {0:M}
     --     +1 RFN <PERMANENT_RECORD_FILE_NUMBER>  {0:1}
@@ -30,7 +30,7 @@ data Person = Person {
     --     +1 <<CHANGE_DATE>>  {0:1}
 } deriving (Show)
 
-newPerson xref = Person xref Free [] UnknownGender
+newPerson xref = Person xref Free [] UnknownGender []
 
 
 data Resn = Free | Locked | Privacy deriving (Show, Eq)
