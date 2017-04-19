@@ -37,13 +37,13 @@ bodyOf obj startLevel nextTags (people, families) continue parseBody
 
 
 parseTopLevel (level, xref, tag) nextTags (people, families) continue
-    | tag == "INDI" = bodyOf' (newPerson xref) continue' parsePerson
-    | tag == "FAM" = bodyOf' (newFamily tag) continue'' parseFamily
+    | tag == "INDI" = bodyOf'' (newPerson xref) continue' parsePerson
+    | tag == "FAM" = bodyOf'' (newFamily tag) continue'' parseFamily
     | otherwise = continue (people, families)
     where
     continue' o = continue (people ++ [o], families)
     continue'' o = continue (people, families ++ [o])
-    bodyOf' newObj = bodyOf newObj level nextTags (people, families)
+    bodyOf'' newObj = bodyOf newObj level nextTags (people, families)
 
 
 parsePerson obj (level, tag, value) nextTags (people, families) continue
