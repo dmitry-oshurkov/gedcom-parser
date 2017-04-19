@@ -73,16 +73,16 @@ main = hspec $ do
 
         context "on second case" $
             it "builds SourceCitation record" $ do
-                let nextTags = splitContent   "2 CONC separate SOURCE record.\
-                                            \2 CONT The source description can use any number of lines\
-                                            \2 TEXT Text from a source. The preferred approach is to cite sources by\
-                                                \3 CONC links to SOURCE records.\
-                                                \3 CONT Here is a new line of text from the source.\
-                                            \2 NOTE @N17@\
+                let nextTags = splitContent   "2 CONC s embedded\n\
+                                            \2 CONT in the record\n\
+                                            \2 TEXT Text from a source. The preferred approach is to cite sources by\n\
+                                                \3 CONC links to SOURCE records.\n\
+                                                \3 CONT Here is a new line of text from the source.\n\
+                                            \2 NOTE @N17@\n\
                                         \1 OBJE"
 
-                bodyOf (newSourceCitation2 "This") 2 nextTags ([], []) id parseSourceCitation
-                    `shouldBe` SourceCitation Nothing "This" 0 Nothing []
+                bodyOf (newSourceCitation2 "This source i") 1 nextTags ([], []) id parseSourceCitation
+                    `shouldBe` SourceCitation Nothing "This source is embedded\nin the record" 0 Nothing [ Note (Just "@N17@") "" [] ]
 
 
     describe "parseRelationshipRole" $

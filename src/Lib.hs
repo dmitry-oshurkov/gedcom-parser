@@ -115,9 +115,9 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "PAGE" = continue $ set page (read value :: Int) obj
     | tag == "EVEN" = bodyOf' (justNewEvent (parseEventType value) value) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
     | tag == "NOTE" = bodyOf' (newNote value) continue'' parseNote
+    | tag == "CONC" = continue $ modify text2 (++ value) obj
+    | tag == "CONT" = continue $ modify text2 (++ "\n" ++ value) obj
     | otherwise = continue obj
--- n SOUR @<XREF:SOUR>@    /* pointer to source record */  {1:1}
---       +2 ROLE <ROLE_IN_EVENT>  {0:1}
 --     +1 DATA        {0:1}
 --       +2 DATE <ENTRY_RECORDING_DATE>  {0:1}
 --       +2 TEXT <TEXT_FROM_SOURCE>  {0:M}
@@ -126,11 +126,8 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
 --     +1 <<MULTIMEDIA_LINK>>  {0:M}
 
 --   |              /* Systems not using source records */
---   n SOUR <SOURCE_DESCRIPTION>  {1:1}
---     +1 [ CONC | CONT ] <SOURCE_DESCRIPTION>  {0:M}
 --     +1 TEXT <TEXT_FROM_SOURCE>  {0:M}
 --        +2 [CONC | CONT ] <TEXT_FROM_SOURCE>  {0:M}
---     +1 <<NOTE_STRUCTURE>>  {0:M}
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
