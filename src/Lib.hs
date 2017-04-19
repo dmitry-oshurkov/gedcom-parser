@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeOperators #-}
 module Lib where
 
 import Text.Regex.PCRE
@@ -100,7 +101,7 @@ parseName obj (level, tag, value) nextTags (people, families) continue
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "PAGE" = continue $ set page (read value :: Int) obj
     | tag == "EVEN" = bodyOf' (justNewEvent (parseEventType value) value) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
-    | tag == "NOTE" = bodyOf' (newNote value) continue'' parseNote
+    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText notes2
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue text2
     | otherwise = continue obj
 --     +1 DATA        {0:1}
@@ -116,26 +117,17 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
-    newNote
-        | hasXref = newNote1
-        | hasText = newNote2
     continue' o = continue $ set event o obj
-    continue'' o = continue $ modify notes2 (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
 parseNote obj (level, tag, value) nextTags (people, families) continue
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue text
-    | tag == "SOUR" = bodyOf' (newSourceCitation value) continue' parseSourceCitation
+    | tag == "SOUR" = parseSOUR obj level value nextTags (people, families) continue hasXref hasText sourceCitations2
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
-    newSourceCitation
-        | hasXref = newSourceCitation1
-        | hasText = newSourceCitation2
-    continue' o = continue $ modify sourceCitations2 (++ [o]) obj
-    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
 parseCommon obj tag value continue text
@@ -144,21 +136,35 @@ parseCommon obj tag value continue text
     | otherwise = continue obj
 
 
+parseCommon2 :: (Eq t3, Num t3) => t4 -> (t3, String, String) -> [(t3, String, String)] -> (t1, t2) -> (t4 -> t) -> t4 :-> [SourceCitation] -> t4 :-> [Note] -> t
 parseCommon2 obj (level, tag, value) nextTags (people, families) continue sourceCitations notes
-    | tag == "SOUR" = bodyOf' (newSourceCitation value) continue' parseSourceCitation
-    | tag == "NOTE" = bodyOf' (newNote value) continue'' parseNote
+    | tag == "SOUR" = parseSOUR obj level value nextTags (people, families) continue hasXref hasText sourceCitations
+    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText notes
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
-    newNote
-        | hasXref = newNote1
-        | hasText = newNote2
+
+
+parseSOUR :: (Eq t3, Num t3) => t4 -> t3 -> String -> [(t3, String, String)] -> (t1, t2) -> (t4 -> t) -> Bool -> Bool -> t4 :-> [SourceCitation] -> t
+parseSOUR obj level value nextTags (people, families) continue hasXref hasText sourceCitations7 =
+    bodyOf' (newSourceCitation value) continue' parseSourceCitation
+    where
     newSourceCitation
         | hasXref = newSourceCitation1
         | hasText = newSourceCitation2
-    continue' o = continue $ modify sourceCitations (++ [o]) obj
-    continue'' o = continue $ modify notes (++ [o]) obj
+    continue' o = continue $ modify sourceCitations7 (++ [o]) obj
+    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseNOTE :: (Eq t4, Num t4) => t5 -> t4 -> String -> [(t4, String, String)] -> (t1, t2) -> (t5 -> t) -> Bool -> Bool -> t5 :-> [Note] -> t
+parseNOTE obj level value nextTags (people, families) continue hasXref hasText notes =
+    bodyOf' (newNote value) continue' parseNote
+    where
+    newNote
+        | hasXref = newNote1
+        | hasText = newNote2
+    continue' o = continue $ modify notes (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
