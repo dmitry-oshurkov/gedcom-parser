@@ -138,13 +138,13 @@ parseNote obj (level, tag, value) nextTags (people, families) continue
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
-parseCommon obj tag value continue fld
-    | tag == "CONC" = continue $ modify fld (++ value) obj
-    | tag == "CONT" = continue $ modify fld (++ "\n" ++ value) obj
+parseCommon obj tag value continue text
+    | tag == "CONC" = continue $ modify text (++ value) obj
+    | tag == "CONT" = continue $ modify text (++ "\n" ++ value) obj
     | otherwise = continue obj
 
 
-parseCommon2 obj (level, tag, value) nextTags (people, families) continue fld1 fld2
+parseCommon2 obj (level, tag, value) nextTags (people, families) continue sourceCitations notes
     | tag == "SOUR" = bodyOf' (newSourceCitation value) continue' parseSourceCitation
     | tag == "NOTE" = bodyOf' (newNote value) continue'' parseNote
     | otherwise = continue obj
@@ -157,8 +157,8 @@ parseCommon2 obj (level, tag, value) nextTags (people, families) continue fld1 f
     newSourceCitation
         | hasXref = newSourceCitation1
         | hasText = newSourceCitation2
-    continue' o = continue $ modify fld1 (++ [o]) obj
-    continue'' o = continue $ modify fld2 (++ [o]) obj
+    continue' o = continue $ modify sourceCitations (++ [o]) obj
+    continue'' o = continue $ modify notes (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
