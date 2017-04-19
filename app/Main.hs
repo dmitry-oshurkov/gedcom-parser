@@ -13,7 +13,7 @@ main = do
     contents <- readFile "test/TGC55CLF-utf8.ged"
     let tags = splitContent contents
 
-    let (people, families) = parseLine (head tags) (tail tags) ([], [])
+    let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
 
     LC.putStrLn . encodePretty $ families
     LC.putStrLn . encodePretty $ people

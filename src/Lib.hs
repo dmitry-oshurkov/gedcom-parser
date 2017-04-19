@@ -18,6 +18,14 @@ parseTag src =
     value = match!!3
 
 
+parseGEDCOM (level, xref, tag) nextTags (people, families)
+    | null nextTags = (people, families)
+    | level == 0 && head xref == '@' = parseTopLevel (level, xref, tag) nextTags (people, families) self
+    | otherwise = self (people, families)
+    where
+    self = parseGEDCOM (head nextTags) (tail nextTags)
+
+
 bodyOf obj startLevel nextTags (people, families) continue parseBody
     | null nextTags = continue obj
     | level == startLevel = continue obj
@@ -26,14 +34,6 @@ bodyOf obj startLevel nextTags (people, families) continue parseBody
     where
     self o = bodyOf o startLevel (tail nextTags) (people, families) continue parseBody
     (level, tag, value) = head nextTags
-
-
-parseLine (level, xref, tag) nextTags (people, families)
-    | null nextTags = (people, families)
-    | level == 0 && head xref == '@' = parseTopLevel (level, xref, tag) nextTags (people, families) self
-    | otherwise = self (people, families)
-    where
-    self = parseLine (head nextTags) (tail nextTags)
 
 
 parseTopLevel (level, xref, tag) nextTags (people, families) continue
