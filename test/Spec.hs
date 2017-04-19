@@ -10,13 +10,13 @@ main :: IO ()
 main = hspec $ do
 
     describe "parseTag" $ do
-        it "returns the level, tag, value of a NAME tag" $
+        it "returns level, tag, value of a NAME tag" $
             parseTag "1 NAME Lucy Special /ANSEL/" `shouldBe` (1, "NAME", "Lucy Special /ANSEL/")
 
-        it "returns the level, tag and empty value of a GEDC tag" $
+        it "returns level, tag and empty value of a GEDC tag" $
             parseTag "1 GEDC" `shouldBe` (1, "GEDC", "")
 
-        it "returns the level, xref, tag of a INDI tag" $
+        it "returns level, xref, tag of a INDI tag" $
             parseTag "0 @I14@ INDI" `shouldBe` (0, "@I14@", "INDI")
 
 
@@ -62,7 +62,7 @@ main = hspec $ do
 
 
     describe "parseRelationshipRole" $
-        it "returns the valid value" $ do
+        it "returns valid value" $ do
             parseRelationshipRole "CHIL" `shouldBe` Child
             parseRelationshipRole "HUSB" `shouldBe` Husband
             parseRelationshipRole "WIFE" `shouldBe` Wife
@@ -73,7 +73,7 @@ main = hspec $ do
 
 
     describe "parseEventType" $
-        it "returns the valid value" $ do
+        it "returns valid value" $ do
             parseEventType "ANUL" `shouldBe` Anul
             parseEventType "CENS" `shouldBe` Cens
             parseEventType "DIV" `shouldBe` Div
@@ -111,7 +111,7 @@ main = hspec $ do
 
     describe "parseResn" $ do
         context "when value is known" $
-            it "returns the valid value" $ do
+            it "returns valid value" $ do
                 parseResn "locked" `shouldBe` Locked
                 parseResn "privacy" `shouldBe` Privacy
 
@@ -122,7 +122,7 @@ main = hspec $ do
 
     describe "parseGender" $ do
         context "when value is known" $
-            it "returns the valid value" $ do
+            it "returns valid value" $ do
                 parseGender "M" `shouldBe` Male
                 parseGender "F" `shouldBe` Female
 
@@ -133,7 +133,7 @@ main = hspec $ do
 
     describe "parseNote" $ do
         context "on first case" $
-            it "returns the valid value" $ do
+            it "builds Note record" $ do
                 {-
                     4 NOTE @N26@
                     4 FILE ImgFile.JPG
@@ -145,7 +145,7 @@ main = hspec $ do
                     `shouldBe` Note (Just "@N26@") "" []
 
         context "on second case" $
-            it "returns the valid value" $ do
+            it "builds Note record" $ do
                 {-
                     2 NOTE These are notes about the first NAME structure in this record. These notes are
                         3 CONC embedded in the INDIVIDUAL record itself.
@@ -170,7 +170,7 @@ main = hspec $ do
 
 
     describe "bodyOf" $
-        it "parse next level tags only" $ do
+        it "parses next level tags only" $ do
 
             let nextTags = splitContent  "2 SOUR @SOURCE1@\n\
                                             \3 PAGE 55\n\
