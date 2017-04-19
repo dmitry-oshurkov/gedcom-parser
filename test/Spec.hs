@@ -2,6 +2,7 @@
 import Test.Hspec
 import Test.QuickCheck
 import Control.Exception (evaluate)
+import Data.List.Split
 import Lib
 import Model
 
@@ -167,3 +168,12 @@ main = hspec $ do
                         ]
             bodyOf (newNote2 "These are notes about the first NAME structure in this record. These notes are ") 2 nextTags ([], []) id parseNote2
                 `shouldBe` Note Nothing "These are notes about the first NAME structure in this record. These notes are embedded in the INDIVIDUAL record itself.\n\nThe second name structure in this record uses all possible tags for a personal name structure.\n\nNOTE: many applications are confused by two NAME structures." []
+
+
+    describe "bodyOf" $
+        it "parse next level tags only" $ do
+
+            let nextTags = map parseTag (splitOn "\n" "2 SOUR @SOURCE1@\n3 PAGE 55\n3 OBJE\n4 NOTE @N26@\n3 NOTE @N7@\n2 NOTE This\n1 NAME Barry")
+
+            bodyOf (newName "Villy") 1 nextTags ([], []) id parseName
+                `shouldBe` Name "Villy" "" "" "" "" "" "" [ SourceCitation "@SOURCE1@" 55 Nothing [ Note (Just "@N7@") "" [] ] ] [ Note Nothing "This" [] ]

@@ -18,7 +18,8 @@ parseTag src =
 bodyOf obj startLevel nextTags (people, families) continue parseBody
     | null nextTags = continue obj
     | level == startLevel = continue obj
-    | otherwise = parseBody obj (level, tag, value) nextTags (people, families) self
+    | level == (startLevel + 1) = parseBody obj (level, tag, value) nextTags (people, families) self
+    | otherwise = self obj
     where
     self o = bodyOf o startLevel (tail nextTags) (people, families) continue parseBody
     (level, tag, value) = head nextTags
