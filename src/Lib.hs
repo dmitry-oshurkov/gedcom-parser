@@ -60,9 +60,8 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 ALIA @<XREF:INDI>@  {0:M}
 --     +1 ANCI @<XREF:SUBM>@  {0:M}
 --     +1 DESI @<XREF:SUBM>@  {0:M}
-    | tag == "SOUR" = bodyOf' (newSourceCitation value) continue'' parseSourceCitation
 --     +1 <<MULTIMEDIA_LINK>>  {0:M}
-    | tag == "NOTE" = bodyOf' (newNote value) continue''' parseNote
+    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue sourceCitations3 notes3
 --     +1 RFN <PERMANENT_RECORD_FILE_NUMBER>  {0:1}
 --     +1 AFN <ANCESTRAL_FILE_NUMBER>  {0:1}
 --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
@@ -71,17 +70,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 <<CHANGE_DATE>>  {0:1}
     | otherwise = continue obj
     where
-    hasXref = head value == '@'
-    hasText = head value /= '@'
-    newNote
-        | hasXref = newNote1
-        | hasText = newNote2
-    newSourceCitation
-        | hasXref = newSourceCitation1
-        | hasText = newSourceCitation2
     continue' o = continue $ modify names (++ [o]) obj
-    continue'' o = continue $ modify sourceCitations3 (++ [o]) obj
-    continue''' o = continue $ modify notes3 (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
@@ -104,21 +93,8 @@ parseName obj (level, tag, value) nextTags (people, families) continue
     | tag == "SPFX" = continue $ set spfx value obj
     | tag == "SURN" = continue $ set surn value obj
     | tag == "NSFX" = continue $ set nsfx value obj
-    | tag == "SOUR" = bodyOf' (newSourceCitation value) continue' parseSourceCitation
-    | tag == "NOTE" = bodyOf' (newNote value) continue'' parseNote
+    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue sourceCitations notes
     | otherwise = continue obj
-    where
-    hasXref = head value == '@'
-    hasText = head value /= '@'
-    newNote
-        | hasXref = newNote1
-        | hasText = newNote2
-    newSourceCitation
-        | hasXref = newSourceCitation1
-        | hasText = newSourceCitation2
-    continue' o = continue $ modify sourceCitations (++ [o]) obj
-    continue'' o = continue $ modify notes (++ [o]) obj
-    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
@@ -166,6 +142,24 @@ parseCommon obj tag value continue fld
     | tag == "CONC" = continue $ modify fld (++ value) obj
     | tag == "CONT" = continue $ modify fld (++ "\n" ++ value) obj
     | otherwise = continue obj
+
+
+parseCommon2 obj (level, tag, value) nextTags (people, families) continue fld1 fld2
+    | tag == "SOUR" = bodyOf' (newSourceCitation value) continue' parseSourceCitation
+    | tag == "NOTE" = bodyOf' (newNote value) continue'' parseNote
+    | otherwise = continue obj
+    where
+    hasXref = head value == '@'
+    hasText = head value /= '@'
+    newNote
+        | hasXref = newNote1
+        | hasText = newNote2
+    newSourceCitation
+        | hasXref = newSourceCitation1
+        | hasText = newSourceCitation2
+    continue' o = continue $ modify fld1 (++ [o]) obj
+    continue'' o = continue $ modify fld2 (++ [o]) obj
+    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
 parseEvent obj (level, tag, value) nextTags (people, families) continue
