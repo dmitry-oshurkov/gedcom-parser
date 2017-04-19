@@ -37,17 +37,18 @@ bodyOf obj startLevel nextTags (people, families) continue parseBody
 
 
 parseTopLevel (level, xref, tag) nextTags (people, families) continue
-    | tag == "INDI" = bodyOf (newPerson xref) level nextTags (people, families) continue' parsePerson
-    | tag == "FAM" = bodyOf (newFamily tag) level nextTags (people, families) continue'' parseFamily
+    | tag == "INDI" = bodyOf' (newPerson xref) continue' parsePerson
+    | tag == "FAM" = bodyOf' (newFamily tag) continue'' parseFamily
     | otherwise = continue (people, families)
     where
     continue' o = continue (people ++ [o], families)
     continue'' o = continue (people, families ++ [o])
+    bodyOf' newObj = bodyOf newObj level nextTags (people, families)
 
 
 parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "RESN" = continue $ set resn (parseResn value) obj
-    | tag == "NAME" = bodyOf (newName value) level (tail nextTags) (people, families) continue' parseName
+    | tag == "NAME" = bodyOf' (newName value) continue' parseName
     | tag == "SEX" = continue $ set gender (parseGender value) obj
     | otherwise = continue obj
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
@@ -71,6 +72,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 <<CHANGE_DATE>>  {0:1}
     where
     continue' o = continue $ modify names (++ [o]) obj
+    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
 parseResn val
@@ -92,20 +94,21 @@ parseName obj (level, tag, value) nextTags (people, families) continue
     | tag == "SPFX" = continue $ set spfx value obj
     | tag == "SURN" = continue $ set surn value obj
     | tag == "NSFX" = continue $ set nsfx value obj
-    | tag == "SOUR" = bodyOf (newSourceCitation value) level (tail nextTags) (people, families) continue' parseSourceCitation
-    | tag == "NOTE" && head value == '@' = bodyOf (newNote1 value) level (tail nextTags) (people, families) continue'' parseNote
-    | tag == "NOTE" && head value /= '@' = bodyOf (newNote2 value) level (tail nextTags) (people, families) continue'' parseNote
+    | tag == "SOUR" = bodyOf' (newSourceCitation value) continue' parseSourceCitation
+    | tag == "NOTE" && head value == '@' = bodyOf' (newNote1 value) continue'' parseNote
+    | tag == "NOTE" && head value /= '@' = bodyOf' (newNote2 value) continue'' parseNote
     | otherwise = continue obj
     where
     continue' o = continue $ modify sourceCitations (++ [o]) obj
     continue'' o = continue $ modify notes (++ [o]) obj
+    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "PAGE" = continue $ set page (read value :: Int) obj
-    | tag == "EVEN" = bodyOf (justNewEvent (parseEventType value) value) level (tail nextTags) (people, families) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
-    | tag == "NOTE" && head value == '@' = bodyOf (newNote1 value) level (tail nextTags) (people, families) continue'' parseNote
-    | tag == "NOTE" && head value /= '@' = bodyOf (newNote2 value) level (tail nextTags) (people, families) continue'' parseNote
+    | tag == "EVEN" = bodyOf' (justNewEvent (parseEventType value) value) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
+    | tag == "NOTE" && head value == '@' = bodyOf' (newNote1 value) continue'' parseNote
+    | tag == "NOTE" && head value /= '@' = bodyOf' (newNote2 value) continue'' parseNote
     | otherwise = continue obj
 -- n SOUR @<XREF:SOUR>@    /* pointer to source record */  {1:1}
 --       +2 ROLE <ROLE_IN_EVENT>  {0:1}
@@ -125,15 +128,17 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     where
     continue' o = continue $ set event o obj
     continue'' o = continue $ modify notes2 (++ [o]) obj
+    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
 parseNote obj (level, tag, value) nextTags (people, families) continue
     | tag == "CONC" = continue $ modify text (++ value) obj
     | tag == "CONT" = continue $ modify text (++ "\n" ++ value) obj
-    | tag == "SOUR" = bodyOf (newSourceCitation value) level (tail nextTags) (people, families) continue' parseSourceCitation
+    | tag == "SOUR" = bodyOf' (newSourceCitation value) continue' parseSourceCitation
     | otherwise = continue obj
     where
     continue' o = continue $ modify sourceCitations2 (++ [o]) obj
+    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
 parseEvent obj (level, tag, value) nextTags (people, families) continue
