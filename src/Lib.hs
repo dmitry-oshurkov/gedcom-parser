@@ -62,7 +62,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 DESI @<XREF:SUBM>@  {0:M}
     | tag == "SOUR" = bodyOf' (newSourceCitation value) continue'' parseSourceCitation
 --     +1 <<MULTIMEDIA_LINK>>  {0:M}
---     +1 <<NOTE_STRUCTURE>>  {0:M}
+    | tag == "NOTE" = bodyOf' (newNote value) continue''' parseNote
 --     +1 RFN <PERMANENT_RECORD_FILE_NUMBER>  {0:1}
 --     +1 AFN <ANCESTRAL_FILE_NUMBER>  {0:1}
 --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
@@ -73,11 +73,15 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
+    newNote
+        | hasXref = newNote1
+        | hasText = newNote2
     newSourceCitation
         | hasXref = newSourceCitation1
         | hasText = newSourceCitation2
     continue' o = continue $ modify names (++ [o]) obj
     continue'' o = continue $ modify sourceCitations3 (++ [o]) obj
+    continue''' o = continue $ modify notes3 (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 

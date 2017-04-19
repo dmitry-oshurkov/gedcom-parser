@@ -19,9 +19,9 @@ data Person = Person {
     --     +1 ALIA @<XREF:INDI>@  {0:M}
     --     +1 ANCI @<XREF:SUBM>@  {0:M}
     --     +1 DESI @<XREF:SUBM>@  {0:M}
-    _sourceCitations3 :: [SourceCitation]
+    _sourceCitations3 :: [SourceCitation],
     --     +1 <<MULTIMEDIA_LINK>>  {0:M}
-    --     +1 <<NOTE_STRUCTURE>>  {0:M}
+    _notes3 :: [Note]
     --     +1 RFN <PERMANENT_RECORD_FILE_NUMBER>  {0:1}
     --     +1 AFN <ANCESTRAL_FILE_NUMBER>  {0:1}
     --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
@@ -30,7 +30,7 @@ data Person = Person {
     --     +1 <<CHANGE_DATE>>  {0:1}
 } deriving (Show)
 
-newPerson xref = Person xref Free [] UnknownGender []
+newPerson xref = Person xref Free [] UnknownGender [] []
 
 
 data Resn = Free | Locked | Privacy deriving (Show, Eq)

@@ -7,13 +7,14 @@ import Model
 
 
 instance ToJSON Person where
-    toJSON (Person xref resn names gender sourceCitations) =
+    toJSON (Person xref resn names gender sourceCitations notes) =
         object [
             "xref" .= xref,
             "resn" .= resn,
             "names" .= names,
             "gender" .= gender,
-            "sourceCitations" .= sourceCitations
+            "sourceCitations" .= sourceCitations,
+            "notes" .= notes
         ]
 
 instance ToJSON Resn where
