@@ -53,13 +53,15 @@ newName value = Name value "" "" "" "" "" "" [] []
 
 
 data SourceCitation = SourceCitation {
-    _xref2 :: String,
+    _xref2 :: Maybe String,
+    _text2 :: String,
     _page :: Int,
     _event :: Maybe Event,
     _notes2 :: [Note]
 } deriving (Show, Eq)
 
-newSourceCitation xref = SourceCitation xref 0 Nothing []
+newSourceCitation1 xref = SourceCitation (Just xref) "" 0 Nothing []
+newSourceCitation2 text = SourceCitation Nothing text 0 Nothing []
 
 
 data Event = Event {

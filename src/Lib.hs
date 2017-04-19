@@ -103,6 +103,9 @@ parseName obj (level, tag, value) nextTags (people, families) continue
     newNote
         | hasXref = newNote1
         | hasText = newNote2
+    newSourceCitation
+        | hasXref = newSourceCitation1
+        | hasText = newSourceCitation2
     continue' o = continue $ modify sourceCitations (++ [o]) obj
     continue'' o = continue $ modify notes (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
@@ -145,6 +148,11 @@ parseNote obj (level, tag, value) nextTags (people, families) continue
     | tag == "SOUR" = bodyOf' (newSourceCitation value) continue' parseSourceCitation
     | otherwise = continue obj
     where
+    hasXref = head value == '@'
+    hasText = head value /= '@'
+    newSourceCitation
+        | hasXref = newSourceCitation1
+        | hasText = newSourceCitation2
     continue' o = continue $ modify sourceCitations2 (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 

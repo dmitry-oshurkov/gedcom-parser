@@ -16,7 +16,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            encode people `shouldBe` "[{\"xref\":\"@I14@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Charlie Accented /ANSEL/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Male\",\"resn\":\"Free\"},{\"xref\":\"@I13@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Lucy Special /ANSEL/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@PERSON6@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Teresa Mary /Caregiver/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@I12@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Extra URL /Filelinks/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@I11@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"General Custom /Filelinks/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Male\",\"resn\":\"Free\"},{\"xref\":\"@I10@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Nonstandard Multimedia /Filelinks/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@I9@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Standard GEDCOM /Filelinks/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Male\",\"resn\":\"Free\"},{\"xref\":\"@PERSON2@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Mary First /Jones/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@I15@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Torture GEDCOM /Matriarch/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@PERSON8@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Elizabeth Second /Smith/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@PERSON3@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Chris Locked /Torture/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"UnknownGender\",\"resn\":\"Locked\"},{\"xref\":\"@PERSON1@\",\"names\":[{\"nick\":\"Joe\",\"npfx\":\"Prof.\",\"value\":\"Joseph Tag /Torture/\",\"givn\":\"Joseph\",\"surn\":\"Torture\",\"spfx\":\"Le\",\"sourceCitations\":[{\"event\":null,\"page\":42,\"xref\":\"@SOURCE1@\",\"notes\":[]}],\"notes\":[{\"text\":\"These are notes about the first NAME structure in this record. These notes areembedded in the INDIVIDUAL record itself.\\n\\nThe second name structure in this record uses all possible tags for a personal namestructure.\\n\\nNOTE: many applications are confused by two NAME structures.\",\"xref\":null,\"sourceCitations\":[]}],\"nsfx\":\"Jr.\"},{\"nick\":\"\",\"npfx\":\"\",\"value\":\"William John /Smith/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[{\"event\":{\"role\":null,\"customRole\":null,\"type\":\"CustomEventType\",\"customType\":\"Event type cited in source\"},\"page\":55,\"xref\":\"@SOURCE1@\",\"notes\":[{\"text\":\"\",\"xref\":\"@N7@\",\"sourceCitations\":[]}]}],\"notes\":[{\"text\":\"This is a second personal NAME structure in a single INDIVIDUAL recordwhich is allowed in GEDCOM. This second NAME structure has all possiblefields for a NAME structure.\\n\\nThese notes are embedded in the INDIVIDUAL record.\",\"xref\":null,\"sourceCitations\":[]}],\"nsfx\":\"\"}],\"gender\":\"Male\",\"resn\":\"Free\"},{\"xref\":\"@PERSON7@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Pat Smith /Torture/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"UnknownGender\",\"resn\":\"Free\"},{\"xref\":\"@PERSON4@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Sandy Privacy /Torture/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"UnknownGender\",\"resn\":\"Privacy\"},{\"xref\":\"@PERSON5@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"William Joseph /Torture/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Male\",\"resn\":\"Free\"}]"
+            encode people `shouldBe` "[{\"xref\":\"@I14@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Charlie Accented /ANSEL/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Male\",\"resn\":\"Free\"},{\"xref\":\"@I13@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Lucy Special /ANSEL/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@PERSON6@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Teresa Mary /Caregiver/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@I12@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Extra URL /Filelinks/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@I11@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"General Custom /Filelinks/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Male\",\"resn\":\"Free\"},{\"xref\":\"@I10@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Nonstandard Multimedia /Filelinks/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@I9@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Standard GEDCOM /Filelinks/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Male\",\"resn\":\"Free\"},{\"xref\":\"@PERSON2@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Mary First /Jones/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@I15@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Torture GEDCOM /Matriarch/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@PERSON8@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Elizabeth Second /Smith/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Female\",\"resn\":\"Free\"},{\"xref\":\"@PERSON3@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Chris Locked /Torture/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"UnknownGender\",\"resn\":\"Locked\"},{\"xref\":\"@PERSON1@\",\"names\":[{\"nick\":\"Joe\",\"npfx\":\"Prof.\",\"value\":\"Joseph Tag /Torture/\",\"givn\":\"Joseph\",\"surn\":\"Torture\",\"spfx\":\"Le\",\"sourceCitations\":[{\"event\":null,\"text\":\"\",\"page\":42,\"xref\":\"@SOURCE1@\",\"notes\":[]}],\"notes\":[{\"text\":\"These are notes about the first NAME structure in this record. These notes areembedded in the INDIVIDUAL record itself.\\n\\nThe second name structure in this record uses all possible tags for a personal namestructure.\\n\\nNOTE: many applications are confused by two NAME structures.\",\"xref\":null,\"sourceCitations\":[]}],\"nsfx\":\"Jr.\"},{\"nick\":\"\",\"npfx\":\"\",\"value\":\"William John /Smith/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[{\"event\":{\"role\":null,\"customRole\":null,\"type\":\"CustomEventType\",\"customType\":\"Event type cited in source\"},\"text\":\"\",\"page\":55,\"xref\":\"@SOURCE1@\",\"notes\":[{\"text\":\"\",\"xref\":\"@N7@\",\"sourceCitations\":[]}]}],\"notes\":[{\"text\":\"This is a second personal NAME structure in a single INDIVIDUAL recordwhich is allowed in GEDCOM. This second NAME structure has all possiblefields for a NAME structure.\\n\\nThese notes are embedded in the INDIVIDUAL record.\",\"xref\":null,\"sourceCitations\":[]}],\"nsfx\":\"\"}],\"gender\":\"Male\",\"resn\":\"Free\"},{\"xref\":\"@PERSON7@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Pat Smith /Torture/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"UnknownGender\",\"resn\":\"Free\"},{\"xref\":\"@PERSON4@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"Sandy Privacy /Torture/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"UnknownGender\",\"resn\":\"Privacy\"},{\"xref\":\"@PERSON5@\",\"names\":[{\"nick\":\"\",\"npfx\":\"\",\"value\":\"William Joseph /Torture/\",\"givn\":\"\",\"surn\":\"\",\"spfx\":\"\",\"sourceCitations\":[],\"notes\":[],\"nsfx\":\"\"}],\"gender\":\"Male\",\"resn\":\"Free\"}]"
 
 
     describe "parseTag" $ do
@@ -54,21 +54,35 @@ main = hspec $ do
             bodyOf (newName "Joseph Tag /Torture/") 1 nextTags ([], []) id parseName
                 `shouldBe` Name "Joseph Tag /Torture/" "Prof." "Joseph" "Joe" "Le" "Torture" "Jr." [] []
 
-    describe "parseSourceCitation" $
-        it "builds SourceCitation record" $ do
-            {-
-                2 SOUR @SOURCE1@
-                    3 PAGE 42
-                    3 EVEN Event type cited in source
-                2 NOTE T
-            -}
-            let nextTags = [
-                            (3, "PAGE", "42"),
-                            (3, "EVEN", "Event type cited in source"),
-                            (2, "NOTE", "T")
-                        ]
-            bodyOf (newSourceCitation "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
-                `shouldBe` SourceCitation "@SOURCE1@" 42 (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) []
+    describe "parseSourceCitation" $ do
+        context "on first case" $
+            it "builds SourceCitation record" $ do
+                {-
+                    2 SOUR @SOURCE1@
+                        3 PAGE 42
+                        3 EVEN Event type cited in source
+                    2 NOTE T
+                -}
+                let nextTags = [
+                                (3, "PAGE", "42"),
+                                (3, "EVEN", "Event type cited in source"),
+                                (2, "NOTE", "T")
+                            ]
+                bodyOf (newSourceCitation1 "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
+                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" 42 (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) []
+
+        context "on second case" $
+            it "builds SourceCitation record" $ do
+                let nextTags = splitContent   "2 CONC separate SOURCE record.\
+                                            \2 CONT The source description can use any number of lines\
+                                            \2 TEXT Text from a source. The preferred approach is to cite sources by\
+                                                \3 CONC links to SOURCE records.\
+                                                \3 CONT Here is a new line of text from the source.\
+                                            \2 NOTE @N17@\
+                                        \1 OBJE"
+
+                bodyOf (newSourceCitation2 "This") 2 nextTags ([], []) id parseSourceCitation
+                    `shouldBe` SourceCitation Nothing "This" 0 Nothing []
 
 
     describe "parseRelationshipRole" $
@@ -191,4 +205,4 @@ main = hspec $ do
                                      \1 NAME Barry"
 
             bodyOf (newName "Villy") 1 nextTags ([], []) id parseName
-                `shouldBe` Name "Villy" "" "" "" "" "" "" [ SourceCitation "@SOURCE1@" 55 Nothing [ Note (Just "@N7@") "" [] ] ] [ Note Nothing "This" [] ]
+                `shouldBe` Name "Villy" "" "" "" "" "" "" [ SourceCitation (Just "@SOURCE1@") "" 55 Nothing [ Note (Just "@N7@") "" [] ] ] [ Note Nothing "This" [] ]
