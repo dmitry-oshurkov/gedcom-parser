@@ -125,8 +125,7 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "PAGE" = continue $ set page (read value :: Int) obj
     | tag == "EVEN" = bodyOf' (justNewEvent (parseEventType value) value) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
     | tag == "NOTE" = bodyOf' (newNote value) continue'' parseNote
-    | tag == "CONC" = continue $ modify text2 (++ value) obj
-    | tag == "CONT" = continue $ modify text2 (++ "\n" ++ value) obj
+    | tag == "CONC" || tag == "CONT" = parseCommon obj tag value continue text2
     | otherwise = continue obj
 --     +1 DATA        {0:1}
 --       +2 DATE <ENTRY_RECORDING_DATE>  {0:1}
@@ -150,8 +149,7 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
 
 
 parseNote obj (level, tag, value) nextTags (people, families) continue
-    | tag == "CONC" = continue $ modify text (++ value) obj
-    | tag == "CONT" = continue $ modify text (++ "\n" ++ value) obj
+    | tag == "CONC" || tag == "CONT" = parseCommon obj tag value continue text
     | tag == "SOUR" = bodyOf' (newSourceCitation value) continue' parseSourceCitation
     | otherwise = continue obj
     where
@@ -162,6 +160,12 @@ parseNote obj (level, tag, value) nextTags (people, families) continue
         | hasText = newSourceCitation2
     continue' o = continue $ modify sourceCitations2 (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseCommon obj tag value continue fld
+    | tag == "CONC" = continue $ modify fld (++ value) obj
+    | tag == "CONT" = continue $ modify fld (++ "\n" ++ value) obj
+    | otherwise = continue obj
 
 
 parseEvent obj (level, tag, value) nextTags (people, families) continue
