@@ -42,6 +42,7 @@ test-suite gedcom-parser-test
   build-depends:       base
                      , hspec
                      , QuickCheck >= 2
+                     , aeson
                      , gedcom-parser
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
