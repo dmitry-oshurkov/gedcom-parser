@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import Data.List.Split
 import qualified Data.ByteString.Lazy.Char8 as LC
 import Data.Aeson
 import Data.Aeson.Encode.Pretty
@@ -12,8 +11,7 @@ import JSON
 main :: IO ()
 main = do
     contents <- readFile "test/TGC55CLF-utf8.ged"
-    let lines = splitOn "\n" contents
-    let tags = map parseTag lines
+    let tags = splitContent contents
 
     let (people, families) = parseLine (head tags) (tail tags) ([], [])
 

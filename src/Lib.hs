@@ -2,8 +2,11 @@ module Lib where
 
 import Text.Regex.PCRE
 import Data.Label
+import Data.List.Split
 import Model
 
+
+splitContent contents = map parseTag $ splitOn "\n" contents
 
 parseTag src =
     (level, tag, value)

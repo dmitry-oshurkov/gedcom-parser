@@ -2,7 +2,6 @@
 import Test.Hspec
 import Test.QuickCheck
 import Control.Exception (evaluate)
-import Data.List.Split
 import Lib
 import Model
 
@@ -173,7 +172,13 @@ main = hspec $ do
     describe "bodyOf" $
         it "parse next level tags only" $ do
 
-            let nextTags = map parseTag (splitOn "\n" "2 SOUR @SOURCE1@\n3 PAGE 55\n3 OBJE\n4 NOTE @N26@\n3 NOTE @N7@\n2 NOTE This\n1 NAME Barry")
+            let nextTags = splitContent  "2 SOUR @SOURCE1@\n\
+                                            \3 PAGE 55\n\
+                                            \3 OBJE\n\
+                                                \4 NOTE @N26@\n\
+                                            \3 NOTE @N7@\n\
+                                        \2 NOTE This\n\
+                                     \1 NAME Barry"
 
             bodyOf (newName "Villy") 1 nextTags ([], []) id parseName
                 `shouldBe` Name "Villy" "" "" "" "" "" "" [ SourceCitation "@SOURCE1@" 55 Nothing [ Note (Just "@N7@") "" [] ] ] [ Note Nothing "This" [] ]
