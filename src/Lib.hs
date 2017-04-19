@@ -95,10 +95,14 @@ parseName obj (level, tag, value) nextTags (people, families) continue
     | tag == "SURN" = continue $ set surn value obj
     | tag == "NSFX" = continue $ set nsfx value obj
     | tag == "SOUR" = bodyOf' (newSourceCitation value) continue' parseSourceCitation
-    | tag == "NOTE" && head value == '@' = bodyOf' (newNote1 value) continue'' parseNote
-    | tag == "NOTE" && head value /= '@' = bodyOf' (newNote2 value) continue'' parseNote
+    | tag == "NOTE" = bodyOf' (newNote value) continue'' parseNote
     | otherwise = continue obj
     where
+    hasXref = head value == '@'
+    hasText = head value /= '@'
+    newNote
+        | hasXref = newNote1
+        | hasText = newNote2
     continue' o = continue $ modify sourceCitations (++ [o]) obj
     continue'' o = continue $ modify notes (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
@@ -107,8 +111,7 @@ parseName obj (level, tag, value) nextTags (people, families) continue
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "PAGE" = continue $ set page (read value :: Int) obj
     | tag == "EVEN" = bodyOf' (justNewEvent (parseEventType value) value) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
-    | tag == "NOTE" && head value == '@' = bodyOf' (newNote1 value) continue'' parseNote
-    | tag == "NOTE" && head value /= '@' = bodyOf' (newNote2 value) continue'' parseNote
+    | tag == "NOTE" = bodyOf' (newNote value) continue'' parseNote
     | otherwise = continue obj
 -- n SOUR @<XREF:SOUR>@    /* pointer to source record */  {1:1}
 --       +2 ROLE <ROLE_IN_EVENT>  {0:1}
@@ -126,6 +129,11 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
 --        +2 [CONC | CONT ] <TEXT_FROM_SOURCE>  {0:M}
 --     +1 <<NOTE_STRUCTURE>>  {0:M}
     where
+    hasXref = head value == '@'
+    hasText = head value /= '@'
+    newNote
+        | hasXref = newNote1
+        | hasText = newNote2
     continue' o = continue $ set event o obj
     continue'' o = continue $ modify notes2 (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
