@@ -24,9 +24,9 @@ instance ToJSON Gender where
     toJSON = String . pack . show
 
 instance ToJSON Name where
-    toJSON (Name value npfx givn nick spfx surn nsfx sourceCitations notes) =
+    toJSON (Name namePersonal npfx givn nick spfx surn nsfx sourceCitations notes) =
         object [
-            "value" .= value,
+            "namePersonal" .= namePersonal,
             "npfx" .= npfx,
             "givn" .= givn,
             "nick" .= nick,
@@ -38,10 +38,10 @@ instance ToJSON Name where
         ]
 
 instance ToJSON SourceCitation where
-    toJSON (SourceCitation xref text page event notes) =
+    toJSON (SourceCitation xref description page event notes) =
         object [
             "xref" .= xref,
-            "text" .= text,
+            "description" .= description,
             "page" .= page,
             "event" .= event,
             "notes" .= notes
@@ -63,10 +63,10 @@ instance ToJSON EventType where
     toJSON = String . pack . show
 
 instance ToJSON Note where
-    toJSON (Note xref text sourceCitations) =
+    toJSON (Note xref submitterText sourceCitations) =
         object [
             "xref" .= xref,
-            "text" .= text,
+            "submitterText" .= submitterText,
             "sourceCitations" .= sourceCitations
         ]
 
