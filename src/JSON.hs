@@ -38,13 +38,14 @@ instance ToJSON Name where
         ]
 
 instance ToJSON SourceCitation where
-    toJSON (SourceCitation xref description page event notes) =
+    toJSON (SourceCitation xref description page event notes text) =
         object [
             "xref" .= xref,
             "description" .= description,
             "page" .= page,
             "event" .= event,
-            "notes" .= notes
+            "notes" .= notes,
+            "text" .= text
         ]
 
 instance ToJSON Event where

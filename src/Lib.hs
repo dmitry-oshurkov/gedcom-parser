@@ -103,6 +103,7 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "EVEN" = bodyOf' (justNewEvent (parseEventType value) value) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
     | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText srcNotes
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
+    | tag == "TEXT" = bodyOf' value continue'' parseText
     | otherwise = continue obj
 --     +1 DATA        {0:1}
 --       +2 DATE <ENTRY_RECORDING_DATE>  {0:1}
@@ -110,15 +111,18 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
 --         +3 [ CONC | CONT ] <TEXT_FROM_SOURCE>  {0:M}
 --     +1 QUAY <CERTAINTY_ASSESSMENT>  {0:1}
 --     +1 <<MULTIMEDIA_LINK>>  {0:M}
-
---   |              /* Systems not using source records */
---     +1 TEXT <TEXT_FROM_SOURCE>  {0:M}
---        +2 [CONC | CONT ] <TEXT_FROM_SOURCE>  {0:M}
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
     continue' o = continue $ set event o obj
+    continue'' o = continue $ set text o obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseText obj (level, tag, value) nextTags (people, families) continue
+    | tag == "CONC" = continue $ obj ++ value
+    | tag == "CONT" = continue $ obj ++ "\n" ++ value
+    | otherwise = continue obj
 
 
 parseNote obj (level, tag, value) nextTags (people, families) continue
