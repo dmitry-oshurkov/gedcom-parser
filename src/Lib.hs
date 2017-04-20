@@ -106,12 +106,12 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText srcNotes
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
     | tag == "TEXT" = bodyOf' value continue'' parseText
+    | tag == "QUAY" = continue $ set dataQuality (Just $ parseCertaintyAssessment value) obj
     | otherwise = continue obj
 --     +1 DATA        {0:1}
 --       +2 DATE <ENTRY_RECORDING_DATE>  {0:1}
 --       +2 TEXT <TEXT_FROM_SOURCE>  {0:M}
 --         +3 [ CONC | CONT ] <TEXT_FROM_SOURCE>  {0:M}
---     +1 QUAY <CERTAINTY_ASSESSMENT>  {0:1}
 --     +1 <<MULTIMEDIA_LINK>>  {0:M}
     where
     hasXref = head value == '@'

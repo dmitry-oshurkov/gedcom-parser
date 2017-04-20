@@ -38,14 +38,15 @@ instance ToJSON Name where
         ]
 
 instance ToJSON SourceCitation where
-    toJSON (SourceCitation xref description page event notes text) =
+    toJSON (SourceCitation xref description page event notes text dataQuality) =
         object [
             "xref" .= xref,
             "description" .= description,
             "page" .= page,
             "event" .= event,
             "notes" .= notes,
-            "text" .= text
+            "text" .= text,
+            "dataQuality" .= dataQuality
         ]
 
 instance ToJSON Event where
@@ -61,6 +62,9 @@ instance ToJSON RelationshipRole where
     toJSON = String . pack . show
 
 instance ToJSON EventType where
+    toJSON = String . pack . show
+
+instance ToJSON CertaintyAssessment where
     toJSON = String . pack . show
 
 instance ToJSON Note where

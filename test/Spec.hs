@@ -21,7 +21,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "6994230d806a413975b0756d96d37ce86a73484b"
+            sha1Hex (encode people) `shouldBe` "619c6bd06cdda93cd9bc4eb13d7878125e8fea53"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -75,7 +75,7 @@ main = hspec $ do
                                 (2, "NOTE", "T")
                             ]
                 bodyOf (newSourceCitation1 "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
-                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] Nothing
+                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] Nothing Nothing
 
         context "on second case" $
             it "builds SourceCitation record" $ do
@@ -88,7 +88,7 @@ main = hspec $ do
                                         \1 OBJE"
 
                 bodyOf (newSourceCitation2 "This source i") 1 nextTags ([], []) id parseSourceCitation
-                    `shouldBe` SourceCitation Nothing "This source is embedded\nin the record" Nothing Nothing [ Note (Just "@N17@") "" [] ] (Just "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source.")
+                    `shouldBe` SourceCitation Nothing "This source is embedded\nin the record" Nothing Nothing [ Note (Just "@N17@") "" [] ] (Just "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source.") Nothing
 
 
     describe "parseRelationshipRole" $
