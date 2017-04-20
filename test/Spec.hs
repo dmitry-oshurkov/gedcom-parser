@@ -211,4 +211,7 @@ main = hspec $ do
                                      \1 NAME Barry"
 
             bodyOf (newName "Villy") 1 nextTags ([], []) id parseName
-                `shouldBe` Name "Villy" Nothing Nothing Nothing Nothing Nothing Nothing [ SourceCitation (Just "@SOURCE1@") "" (Just 55) Nothing [ Note (Just "@N7@") "" [] ] Nothing ] [ Note Nothing "This" [] ]
+                `shouldBe` (newName "Villy") {
+                                    _nameSourceCitations = [ (newSourceCitation1 "@SOURCE1@") { _page = Just 55, _srcNotes = [ newNote1 "@N7@" ] } ],
+                                    _nameNotes = [ newNote2 "This" ]
+                            }
