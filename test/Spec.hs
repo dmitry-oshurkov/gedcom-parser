@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "2cf49e5d51309f54b87e65d5df790959dc75aa9c"
+            sha1Hex (encode people) `shouldBe` "feb8e9b3ed650467da9405d7a1e1fc5a328dab54"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -76,20 +76,37 @@ main = hspec $ do
                                 (2, "NOTE", "T")
                             ]
                 bodyOf (newSourceCitation1 "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
-                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] Nothing Nothing Nothing
+                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] Nothing Nothing Nothing Nothing
 
         context "on second case" $
             it "builds SourceCitation record" $ do
-                let nextTags = splitContent   "2 CONC s embedded\n\
-                                            \2 CONT in the record\n\
-                                            \2 TEXT Text from a source. The preferred approach is to cite sources by\n\
-                                                \3 CONC links to SOURCE records.\n\
-                                                \3 CONT Here is a new line of text from the source.\n\
-                                            \2 NOTE @N17@\n\
-                                        \1 OBJE"
+
+                let nextTags = getNextTags "1 SOUR @SOURCE1@\n\
+                                                \2 CONC s embedded\n\
+                                                \2 CONT in the record\n\
+                                                \2 TEXT Text from a source. The preferred approach is to cite sources by\n\
+                                                    \3 CONC links to SOURCE records.\n\
+                                                    \3 CONT Here is a new line of text from the source.\n\
+                                                \2 NOTE @N17@\n\
+                                                \2 DATA\n\
+                                                    \3 DATE 1 JAN 1900\n\
+                                                    \3 TEXT Here is some text from the source specific to this source\n\
+                                                        \4 CONC citation.\n\
+                                                        \4 CONT Here is more text but on a new line.\n\
+                                                \2 QUAY 0\n\
+                                         \1 OBJE"
 
                 bodyOf (newSourceCitation2 "This source i") 1 nextTags ([], []) id parseSourceCitation
-                    `shouldBe` SourceCitation Nothing "This source is embedded\nin the record" Nothing Nothing [ Note (Just "@N17@") "" [] ] (Just "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source.") Nothing Nothing
+                    `shouldBe` (newSourceCitation2 "This source is embedded\nin the record") {
+
+                                   _srcNotes = [ newNote1 "@N17@" ],
+                                   _text = Just "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source.",
+                                   _dataQuality = Just Unreliable,
+                                   _dat = Just newData {
+                                        _dataDate = Just "1 JAN 1900",
+                                        _dataText = Just "Here is some text from the source specific to this sourcecitation.\nHere is more text but on a new line."
+                                   }
+                               }
 
 
     describe "parseRelationshipRole" $

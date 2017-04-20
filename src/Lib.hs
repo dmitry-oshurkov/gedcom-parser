@@ -108,11 +108,8 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "TEXT" = bodyOf' value continue'' parseText
     | tag == "QUAY" = continue $ set dataQuality (Just $ parseCertaintyAssessment value) obj
     | tag == "OBJE" = bodyOf' newMultimediaLink continue''' parseMultimediaLink
+    | tag == "DATA" = bodyOf' newData continue'''' parseData
     | otherwise = continue obj
---     +1 DATA        {0:1}
---       +2 DATE <ENTRY_RECORDING_DATE>  {0:1}
---       +2 TEXT <TEXT_FROM_SOURCE>  {0:M}
---         +3 [ CONC | CONT ] <TEXT_FROM_SOURCE>  {0:M}
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
@@ -122,6 +119,17 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     continue' o = continue $ set event (Just o) obj
     continue'' o = continue $ set text (Just o) obj
     continue''' o = continue $ set multimedia (Just o) obj
+    continue'''' o = continue $ set dat (Just o) obj
+    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseData obj (level, tag, value) nextTags (people, families) continue
+    | tag == "DATE" = set' dataDate --todo: need parse date
+    | tag == "TEXT" = bodyOf' value continue' parseText
+    | otherwise = continue obj
+    where
+    set' fld = continue $ set fld (Just value) obj
+    continue' o = continue $ set dataText (Just o) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 

@@ -38,7 +38,7 @@ instance ToJSON Name where
         ]
 
 instance ToJSON SourceCitation where
-    toJSON (SourceCitation xref description page event notes text dataQuality multimedia) =
+    toJSON (SourceCitation xref description page event notes text dataQuality multimedia dat) =
         object [
             "xref" .= xref,
             "description" .= description,
@@ -47,7 +47,8 @@ instance ToJSON SourceCitation where
             "notes" .= notes,
             "text" .= text,
             "dataQuality" .= dataQuality,
-            "multimedia" .= multimedia
+            "multimedia" .= multimedia,
+            "data" .= dat
         ]
 
 instance ToJSON MultimediaLink where
@@ -67,6 +68,13 @@ instance ToJSON Event where
             "customType" .= customType,
             "role" .= role,
             "customRole" .= customRole
+        ]
+
+instance ToJSON Data where
+    toJSON (Data date text) =
+        object [
+            "date" .= date,
+            "text" .= text
         ]
 
 instance ToJSON RelationshipRole where
