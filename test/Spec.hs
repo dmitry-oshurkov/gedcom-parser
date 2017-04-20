@@ -147,7 +147,7 @@ main = hspec $ do
 
         context "when value is unknown" $
             it "throws an exception" $
-                evaluate (parseResn "abracadabra") `shouldThrow` errorCall "Unexpected RESN"
+                evaluate (parseResn "abracadabra") `shouldThrow` errorCall "Unexpected RESN {abracadabra}"
 
 
     describe "parseGender" $ do
@@ -158,7 +158,7 @@ main = hspec $ do
 
         context "when value is unknown" $
             it "throws an exception" $
-                evaluate (parseGender "abracadabra") `shouldThrow` errorCall "Unexpected SEX"
+                evaluate (parseGender "abracadabra") `shouldThrow` errorCall "Unexpected SEX {abracadabra}"
 
 
     describe "parseNote" $ do
@@ -243,4 +243,4 @@ main = hspec $ do
 
         context "when value is unknown" $
             it "throws an exception" $
-                evaluate (parseMultimediaFormat "abracadabra") `shouldThrow` errorCall "Unexpected multimedia format {abracadabra}"
+                evaluate (parseMultimediaFormat "abracadabra") `shouldThrow` errorCall "Unexpected MULTIMEDIA_FORMAT {abracadabra}"

@@ -78,13 +78,13 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 parseResn val
     | val == "locked" = Locked
     | val == "privacy" = Privacy
-    | otherwise = error "Unexpected RESN"
+    | otherwise = error $ "Unexpected RESN {" ++ val ++ "}"
 
 
 parseGender val
     | val == "M" = Male
     | val == "F" = Female
-    | otherwise = error "Unexpected SEX"
+    | otherwise = error $ "Unexpected SEX {" ++ val ++ "}"
 
 
 parseName obj (level, tag, value) nextTags (people, families) continue
@@ -242,7 +242,7 @@ parseMultimediaFormat val
     | val == "pcx" = Pcx
     | val == "tiff" = Tiff
     | val == "wav" = Wav
-    | otherwise = error $ "Unexpected multimedia format {" ++ val ++ "}"
+    | otherwise = error $ "Unexpected MULTIMEDIA_FORMAT {" ++ val ++ "}"
 
 
 parseFamily obj (level, tag, value) nextTags (people, families) continue =
