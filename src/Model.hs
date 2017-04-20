@@ -86,8 +86,7 @@ data Event = Event {
     _customRole :: Maybe String
 } deriving (Show, Eq)
 
-newEvent typ customType = Event typ customType Nothing Nothing
-justNewEvent typ customType = Just (newEvent typ (Just customType))
+newEvent typ customType = Event typ (Just customType) Nothing Nothing
 
 
 data RelationshipRole = Child | Husband | Wife | Mother | Father | Spouse | CustomRelationshipRole deriving (Show, Eq)

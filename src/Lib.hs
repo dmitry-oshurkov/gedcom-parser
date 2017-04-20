@@ -102,7 +102,7 @@ parseName obj (level, tag, value) nextTags (people, families) continue
 
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "PAGE" = continue $ set page (Just (read value :: Int)) obj
-    | tag == "EVEN" = bodyOf' (justNewEvent (parseEventType value) value) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
+    | tag == "EVEN" = bodyOf' (newEvent (parseEventType value) value) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
     | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText srcNotes
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
     | tag == "TEXT" = bodyOf' value continue'' parseText
@@ -119,7 +119,7 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     newMultimediaLink
         | not (null value) && hasXref = newMultimediaLink1 value
         | null value = newMultimediaLink2
-    continue' o = continue $ set event o obj
+    continue' o = continue $ set event (Just o) obj
     continue'' o = continue $ set text (Just o) obj
     continue''' o = continue $ set multimedia (Just o) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
