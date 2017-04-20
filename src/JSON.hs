@@ -38,7 +38,7 @@ instance ToJSON Name where
         ]
 
 instance ToJSON SourceCitation where
-    toJSON (SourceCitation xref description page event notes text dataQuality) =
+    toJSON (SourceCitation xref description page event notes text dataQuality multimedia) =
         object [
             "xref" .= xref,
             "description" .= description,
@@ -46,7 +46,18 @@ instance ToJSON SourceCitation where
             "event" .= event,
             "notes" .= notes,
             "text" .= text,
-            "dataQuality" .= dataQuality
+            "dataQuality" .= dataQuality,
+            "multimedia" .= multimedia
+        ]
+
+instance ToJSON MultimediaLink where
+    toJSON (MultimediaLink xref format descriptiveTitle multimediaFileReference note) =
+        object [
+            "xref" .= xref,
+            "format" .= format,
+            "descriptiveTitle" .= descriptiveTitle,
+            "multimediaFileReference" .= multimediaFileReference,
+            "note" .= note
         ]
 
 instance ToJSON Event where
@@ -65,6 +76,9 @@ instance ToJSON EventType where
     toJSON = String . pack . show
 
 instance ToJSON CertaintyAssessment where
+    toJSON = String . pack . show
+
+instance ToJSON MultimediaFormat where
     toJSON = String . pack . show
 
 instance ToJSON Note where

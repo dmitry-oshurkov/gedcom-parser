@@ -59,11 +59,24 @@ data SourceCitation = SourceCitation {
     _event :: Maybe Event,
     _srcNotes :: [Note],
     _text :: Maybe String,
-    _dataQuality :: Maybe CertaintyAssessment
+    _dataQuality :: Maybe CertaintyAssessment,
+    _multimedia :: Maybe MultimediaLink
 } deriving (Show, Eq)
 
-newSourceCitation1 xref = SourceCitation (Just xref) "" Nothing Nothing [] Nothing Nothing
-newSourceCitation2 description = SourceCitation Nothing description Nothing Nothing [] Nothing Nothing
+newSourceCitation1 xref = SourceCitation (Just xref) "" Nothing Nothing [] Nothing Nothing Nothing
+newSourceCitation2 description = SourceCitation Nothing description Nothing Nothing [] Nothing Nothing Nothing
+
+
+data MultimediaLink = MultimediaLink {
+    _mltXref :: Maybe String,
+    _format :: Maybe MultimediaFormat,
+    _descriptiveTitle :: Maybe String,
+    _multimediaFileReference :: Maybe String,
+    _note :: Maybe Note
+} deriving (Show, Eq)
+
+newMultimediaLink1 xref = MultimediaLink (Just xref) Nothing Nothing Nothing Nothing
+newMultimediaLink2 = MultimediaLink Nothing Nothing Nothing Nothing Nothing
 
 
 data Event = Event {
@@ -100,4 +113,4 @@ data Family = Family {
 newFamily xref = Family xref
 
 
-mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family ]
+mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink ]

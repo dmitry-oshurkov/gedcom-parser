@@ -11,6 +11,7 @@ import JSON
 
 
 sha1Hex s = digestToHexByteString (hash (B.toStrict s) :: Digest SHA1)
+getNextTags = tail . splitContent
 
 
 main :: IO ()
@@ -21,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "619c6bd06cdda93cd9bc4eb13d7878125e8fea53"
+            sha1Hex (encode people) `shouldBe` "2cf49e5d51309f54b87e65d5df790959dc75aa9c"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -75,7 +76,7 @@ main = hspec $ do
                                 (2, "NOTE", "T")
                             ]
                 bodyOf (newSourceCitation1 "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
-                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] Nothing Nothing
+                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] Nothing Nothing Nothing
 
         context "on second case" $
             it "builds SourceCitation record" $ do
@@ -88,7 +89,7 @@ main = hspec $ do
                                         \1 OBJE"
 
                 bodyOf (newSourceCitation2 "This source i") 1 nextTags ([], []) id parseSourceCitation
-                    `shouldBe` SourceCitation Nothing "This source is embedded\nin the record" Nothing Nothing [ Note (Just "@N17@") "" [] ] (Just "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source.") Nothing
+                    `shouldBe` SourceCitation Nothing "This source is embedded\nin the record" Nothing Nothing [ Note (Just "@N17@") "" [] ] (Just "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source.") Nothing Nothing
 
 
     describe "parseRelationshipRole" $
@@ -212,8 +213,19 @@ main = hspec $ do
 
             bodyOf (newName "Villy") 1 nextTags ([], []) id parseName
                 `shouldBe` (newName "Villy") {
-                                    _nameSourceCitations = [ (newSourceCitation1 "@SOURCE1@") { _page = Just 55, _srcNotes = [ newNote1 "@N7@" ] } ],
-                                    _nameNotes = [ newNote2 "This" ]
+
+                                _nameSourceCitations = [
+
+                                    (newSourceCitation1 "@SOURCE1@") {
+
+                                        _page = Just 55,
+                                        _srcNotes = [ newNote1 "@N7@" ],
+                                        _multimedia = Just newMultimediaLink2 {
+                                            _note = Just $ newNote1 "@N26@"
+                                        }
+                                    }
+                                ],
+                                _nameNotes = [ newNote2 "This" ]
                             }
 
 
@@ -244,3 +256,22 @@ main = hspec $ do
         context "when value is unknown" $
             it "throws an exception" $
                 evaluate (parseMultimediaFormat "abracadabra") `shouldThrow` errorCall "Unexpected MULTIMEDIA_FORMAT {abracadabra}"
+
+
+    describe "parseMultimediaLink" $
+        it "builds MultimediaLink record" $ do
+
+            let nextTags = getNextTags "3 OBJE\n\
+                                         \4 TITL Multimedia link about this source\n\
+                                         \4 FORM jpeg\n\
+                                         \4 NOTE @N26@\n\
+                                         \4 FILE ImgFile.JPG\n\
+                                     \3 NOTE @N7@"
+
+            bodyOf newMultimediaLink2 3 nextTags ([], []) id parseMultimediaLink
+                `shouldBe` newMultimediaLink2 {
+                                _format = Just Jpeg,
+                                _descriptiveTitle = Just "Multimedia link about this source",
+                                _multimediaFileReference = Just "ImgFile.JPG",
+                                _note = Just $ newNote1 "@N26@"
+                           }

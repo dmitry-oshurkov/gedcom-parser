@@ -107,17 +107,37 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
     | tag == "TEXT" = bodyOf' value continue'' parseText
     | tag == "QUAY" = continue $ set dataQuality (Just $ parseCertaintyAssessment value) obj
+    | tag == "OBJE" = bodyOf' newMultimediaLink continue''' parseMultimediaLink
     | otherwise = continue obj
 --     +1 DATA        {0:1}
 --       +2 DATE <ENTRY_RECORDING_DATE>  {0:1}
 --       +2 TEXT <TEXT_FROM_SOURCE>  {0:M}
 --         +3 [ CONC | CONT ] <TEXT_FROM_SOURCE>  {0:M}
---     +1 <<MULTIMEDIA_LINK>>  {0:M}
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
+    newMultimediaLink
+        | not (null value) && hasXref = newMultimediaLink1 value
+        | null value = newMultimediaLink2
     continue' o = continue $ set event o obj
     continue'' o = continue $ set text (Just o) obj
+    continue''' o = continue $ set multimedia (Just o) obj
+    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseMultimediaLink obj (level, tag, value) nextTags (people, families) continue
+    | tag == "FORM" = continue $ set format (Just $ parseMultimediaFormat value) obj
+    | tag == "TITL" = continue $ set descriptiveTitle (Just value) obj
+    | tag == "FILE" = continue $ set multimediaFileReference (Just value) obj
+    | tag == "NOTE" = bodyOf' (newNote value) continue' parseNote
+    | otherwise = continue obj
+    where
+    hasXref = head value == '@'
+    hasText = head value /= '@'
+    newNote
+        | hasXref = newNote1
+        | hasText = newNote2
+    continue' o = continue $ set note (Just o) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
