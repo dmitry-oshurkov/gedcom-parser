@@ -115,7 +115,7 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     hasXref = head value == '@'
     hasText = head value /= '@'
     continue' o = continue $ set event o obj
-    continue'' o = continue $ set text o obj
+    continue'' o = continue $ set text (Just o) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
