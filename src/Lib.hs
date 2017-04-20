@@ -88,14 +88,16 @@ parseGender val
 
 
 parseName obj (level, tag, value) nextTags (people, families) continue
-    | tag == "NPFX" = continue $ set npfx (Just value) obj
-    | tag == "GIVN" = continue $ set givn (Just value) obj
-    | tag == "NICK" = continue $ set nick (Just value) obj
-    | tag == "SPFX" = continue $ set spfx (Just value) obj
-    | tag == "SURN" = continue $ set surn (Just value) obj
-    | tag == "NSFX" = continue $ set nsfx (Just value) obj
+    | tag == "NPFX" = set' npfx
+    | tag == "GIVN" = set' givn
+    | tag == "NICK" = set' nick
+    | tag == "SPFX" = set' spfx
+    | tag == "SURN" = set' surn
+    | tag == "NSFX" = set' nsfx
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue nameSourceCitations nameNotes
     | otherwise = continue obj
+    where
+    set' fld = continue $ set fld (Just value) obj
 
 
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
@@ -135,9 +137,11 @@ parseNote obj (level, tag, value) nextTags (people, families) continue
 
 
 parseCommon obj tag value continue text
-    | tag == "CONC" = continue $ modify text (++ value) obj
-    | tag == "CONT" = continue $ modify text (++ "\n" ++ value) obj
+    | tag == "CONC" = modify' (++ value)
+    | tag == "CONT" = modify' (++ "\n" ++ value)
     | otherwise = continue obj
+    where
+    modify' val = continue $ modify text val obj
 
 
 parseCommon2 :: (Eq t3, Num t3) => t4 -> (t3, String, String) -> [(t3, String, String)] -> (t1, t2) -> (t4 -> t) -> t4 :-> [SourceCitation] -> t4 :-> [Note] -> t
