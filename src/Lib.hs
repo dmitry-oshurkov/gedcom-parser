@@ -62,7 +62,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 ANCI @<XREF:SUBM>@  {0:M}
 --     +1 DESI @<XREF:SUBM>@  {0:M}
 --     +1 <<MULTIMEDIA_LINK>>  {0:M}
-    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue sourceCitations3 notes3
+    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue personSourceCitations personNotes
 --     +1 RFN <PERMANENT_RECORD_FILE_NUMBER>  {0:1}
 --     +1 AFN <ANCESTRAL_FILE_NUMBER>  {0:1}
 --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
@@ -94,15 +94,15 @@ parseName obj (level, tag, value) nextTags (people, families) continue
     | tag == "SPFX" = continue $ set spfx value obj
     | tag == "SURN" = continue $ set surn value obj
     | tag == "NSFX" = continue $ set nsfx value obj
-    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue sourceCitations notes
+    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue nameSourceCitations nameNotes
     | otherwise = continue obj
 
 
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     | tag == "PAGE" = continue $ set page (read value :: Int) obj
     | tag == "EVEN" = bodyOf' (justNewEvent (parseEventType value) value) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
-    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText notes2
-    | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue text2
+    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText srcNotes
+    | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
     | otherwise = continue obj
 --     +1 DATA        {0:1}
 --       +2 DATE <ENTRY_RECORDING_DATE>  {0:1}
@@ -122,8 +122,8 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
 
 
 parseNote obj (level, tag, value) nextTags (people, families) continue
-    | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue text
-    | tag == "SOUR" = parseSOUR obj level value nextTags (people, families) continue hasXref hasText sourceCitations2
+    | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue submitterText
+    | tag == "SOUR" = parseSOUR obj level value nextTags (people, families) continue hasXref hasText noteSourceCitations
     | otherwise = continue obj
     where
     hasXref = head value == '@'

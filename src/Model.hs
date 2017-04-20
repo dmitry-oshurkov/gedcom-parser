@@ -5,7 +5,7 @@ import Data.Label
 
 
 data Person = Person {
-    _xref :: String,
+    _personXref :: String,
     _resn :: Resn,
     _names :: [Name],
     _gender :: Gender,
@@ -19,9 +19,9 @@ data Person = Person {
     --     +1 ALIA @<XREF:INDI>@  {0:M}
     --     +1 ANCI @<XREF:SUBM>@  {0:M}
     --     +1 DESI @<XREF:SUBM>@  {0:M}
-    _sourceCitations3 :: [SourceCitation],
+    _personSourceCitations :: [SourceCitation],
     --     +1 <<MULTIMEDIA_LINK>>  {0:M}
-    _notes3 :: [Note]
+    _personNotes :: [Note]
     --     +1 RFN <PERMANENT_RECORD_FILE_NUMBER>  {0:1}
     --     +1 AFN <ANCESTRAL_FILE_NUMBER>  {0:1}
     --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
@@ -38,30 +38,30 @@ data Gender = UnknownGender | Male | Female deriving (Show, Eq)
 
 
 data Name = Name {
-    _value :: String,
+    _namePersonal :: String,
     _npfx :: String,
     _givn :: String,
     _nick :: String,
     _spfx :: String,
     _surn :: String,
     _nsfx :: String,
-    _sourceCitations :: [SourceCitation],
-    _notes :: [Note]
+    _nameSourceCitations :: [SourceCitation],
+    _nameNotes :: [Note]
 } deriving (Show, Eq)
 
-newName value = Name value "" "" "" "" "" "" [] []
+newName namePersonal = Name namePersonal "" "" "" "" "" "" [] []
 
 
 data SourceCitation = SourceCitation {
-    _xref2 :: Maybe String,
-    _text2 :: String,
+    _srcXref :: Maybe String,
+    _description :: String,
     _page :: Int,
     _event :: Maybe Event,
-    _notes2 :: [Note]
+    _srcNotes :: [Note]
 } deriving (Show, Eq)
 
 newSourceCitation1 xref = SourceCitation (Just xref) "" 0 Nothing []
-newSourceCitation2 text = SourceCitation Nothing text 0 Nothing []
+newSourceCitation2 description = SourceCitation Nothing description 0 Nothing []
 
 
 data Event = Event {
@@ -80,17 +80,17 @@ data EventType = Anul | Cens | Div | Divf | Enga | Marr | Marb | Marc | Marl | M
 
 
 data Note = Note {
-    _xref4 :: Maybe String,
-    _text :: String,
-    _sourceCitations2 :: [SourceCitation]
+    _noteXref :: Maybe String,
+    _submitterText :: String,
+    _noteSourceCitations :: [SourceCitation]
 } deriving (Show, Eq)
 
 newNote1 xref = Note (Just xref) "" []
-newNote2 text = Note Nothing text []
+newNote2 submitterText = Note Nothing submitterText []
 
 
 data Family = Family {
-    _xref3 :: String
+    _familyXref :: String
 } deriving (Show)
 
 newFamily xref = Family xref
