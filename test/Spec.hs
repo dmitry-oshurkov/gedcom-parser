@@ -21,7 +21,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "63b9f6a07fc70267ab3a40c43c0b5fc947a0d234"
+            sha1Hex (encode people) `shouldBe` "6994230d806a413975b0756d96d37ce86a73484b"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -58,7 +58,7 @@ main = hspec $ do
                             (1, "SEX", "M")
                         ]
             bodyOf (newName "Joseph Tag /Torture/") 1 nextTags ([], []) id parseName
-                `shouldBe` Name "Joseph Tag /Torture/" "Prof." "Joseph" "Joe" "Le" "Torture" "Jr." [] []
+                `shouldBe` Name "Joseph Tag /Torture/" (Just "Prof.") (Just "Joseph") (Just "Joe") (Just "Le") (Just "Torture") (Just "Jr.") [] []
 
     describe "parseSourceCitation" $ do
         context "on first case" $
@@ -211,4 +211,4 @@ main = hspec $ do
                                      \1 NAME Barry"
 
             bodyOf (newName "Villy") 1 nextTags ([], []) id parseName
-                `shouldBe` Name "Villy" "" "" "" "" "" "" [ SourceCitation (Just "@SOURCE1@") "" (Just 55) Nothing [ Note (Just "@N7@") "" [] ] Nothing ] [ Note Nothing "This" [] ]
+                `shouldBe` Name "Villy" Nothing Nothing Nothing Nothing Nothing Nothing [ SourceCitation (Just "@SOURCE1@") "" (Just 55) Nothing [ Note (Just "@N7@") "" [] ] Nothing ] [ Note Nothing "This" [] ]

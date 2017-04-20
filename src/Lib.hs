@@ -88,12 +88,12 @@ parseGender val
 
 
 parseName obj (level, tag, value) nextTags (people, families) continue
-    | tag == "NPFX" = continue $ set npfx value obj
-    | tag == "GIVN" = continue $ set givn value obj
-    | tag == "NICK" = continue $ set nick value obj
-    | tag == "SPFX" = continue $ set spfx value obj
-    | tag == "SURN" = continue $ set surn value obj
-    | tag == "NSFX" = continue $ set nsfx value obj
+    | tag == "NPFX" = continue $ set npfx (Just value) obj
+    | tag == "GIVN" = continue $ set givn (Just value) obj
+    | tag == "NICK" = continue $ set nick (Just value) obj
+    | tag == "SPFX" = continue $ set spfx (Just value) obj
+    | tag == "SURN" = continue $ set surn (Just value) obj
+    | tag == "NSFX" = continue $ set nsfx (Just value) obj
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue nameSourceCitations nameNotes
     | otherwise = continue obj
 

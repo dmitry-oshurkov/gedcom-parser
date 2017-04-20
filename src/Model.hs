@@ -39,17 +39,17 @@ data Gender = UnknownGender | Male | Female deriving (Show, Eq)
 
 data Name = Name {
     _namePersonal :: String,
-    _npfx :: String,
-    _givn :: String,
-    _nick :: String,
-    _spfx :: String,
-    _surn :: String,
-    _nsfx :: String,
+    _npfx :: Maybe String,
+    _givn :: Maybe String,
+    _nick :: Maybe String,
+    _spfx :: Maybe String,
+    _surn :: Maybe String,
+    _nsfx :: Maybe String,
     _nameSourceCitations :: [SourceCitation],
     _nameNotes :: [Note]
 } deriving (Show, Eq)
 
-newName namePersonal = Name namePersonal "" "" "" "" "" "" [] []
+newName namePersonal = Name namePersonal Nothing Nothing Nothing Nothing Nothing Nothing [] []
 
 
 data SourceCitation = SourceCitation {
