@@ -55,14 +55,14 @@ newName namePersonal = Name namePersonal "" "" "" "" "" "" [] []
 data SourceCitation = SourceCitation {
     _srcXref :: Maybe String,
     _description :: String,
-    _page :: Int,
+    _page :: Maybe Int,
     _event :: Maybe Event,
     _srcNotes :: [Note],
     _text :: Maybe String
 } deriving (Show, Eq)
 
-newSourceCitation1 xref = SourceCitation (Just xref) "" 0 Nothing [] Nothing
-newSourceCitation2 description = SourceCitation Nothing description 0 Nothing [] Nothing
+newSourceCitation1 xref = SourceCitation (Just xref) "" Nothing Nothing [] Nothing
+newSourceCitation2 description = SourceCitation Nothing description Nothing Nothing [] Nothing
 
 
 data Event = Event {
