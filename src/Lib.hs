@@ -234,5 +234,16 @@ parseCertaintyAssessment val
     | otherwise = Unreliable
 
 
+parseMultimediaFormat val
+    | val == "bmp" = Bmp
+    | val == "gif" = Gif
+    | val == "jpeg" = Jpeg
+    | val == "ole" = Ole
+    | val == "pcx" = Pcx
+    | val == "tiff" = Tiff
+    | val == "wav" = Wav
+    | otherwise = error $ "Unexpected multimedia format {" ++ val ++ "}"
+
+
 parseFamily obj (level, tag, value) nextTags (people, families) continue =
     continue obj

@@ -228,3 +228,19 @@ main = hspec $ do
         context "when unknown input" $
             it "returns Unreliable value" $
                 parseCertaintyAssessment "ertewrt" `shouldBe` Unreliable
+
+
+    describe "parseMultimediaFormat" $ do
+        context "when value is known" $
+            it "returns valid value" $ do
+                parseMultimediaFormat "bmp" `shouldBe` Bmp
+                parseMultimediaFormat "gif" `shouldBe` Gif
+                parseMultimediaFormat "jpeg" `shouldBe` Jpeg
+                parseMultimediaFormat "ole" `shouldBe` Ole
+                parseMultimediaFormat "pcx" `shouldBe` Pcx
+                parseMultimediaFormat "tiff" `shouldBe` Tiff
+                parseMultimediaFormat "wav" `shouldBe` Wav
+
+        context "when value is unknown" $
+            it "throws an exception" $
+                evaluate (parseMultimediaFormat "abracadabra") `shouldThrow` errorCall "Unexpected multimedia format {abracadabra}"
