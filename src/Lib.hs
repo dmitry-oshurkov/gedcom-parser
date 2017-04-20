@@ -227,5 +227,12 @@ parseEventType val
     | otherwise = CustomEventType
 
 
+parseCertaintyAssessment val
+    | val == "1" = Questionable
+    | val == "2" = Secondary
+    | val == "3" = Direct
+    | otherwise = Unreliable
+
+
 parseFamily obj (level, tag, value) nextTags (people, families) continue =
     continue obj

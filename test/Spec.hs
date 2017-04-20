@@ -215,3 +215,16 @@ main = hspec $ do
                                     _nameSourceCitations = [ (newSourceCitation1 "@SOURCE1@") { _page = Just 55, _srcNotes = [ newNote1 "@N7@" ] } ],
                                     _nameNotes = [ newNote2 "This" ]
                             }
+
+
+    describe "parseCertaintyAssessment" $ do
+        context "when valid input" $
+            it "returns valid value" $ do
+                parseCertaintyAssessment "0" `shouldBe` Unreliable
+                parseCertaintyAssessment "1" `shouldBe` Questionable
+                parseCertaintyAssessment "2" `shouldBe` Secondary
+                parseCertaintyAssessment "3" `shouldBe` Direct
+
+        context "when unknown input" $
+            it "returns Unreliable value" $
+                parseCertaintyAssessment "ertewrt" `shouldBe` Unreliable
