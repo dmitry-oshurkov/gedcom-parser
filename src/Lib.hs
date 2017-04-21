@@ -275,5 +275,12 @@ parseMultimediaFormat val
     | otherwise = Custom
 
 
+parseDateApproximated val
+    | val == "ABT" = About
+    | val == "CAL" = Calculated
+    | val == "EST" = Estimated
+    | otherwise = error $ "Unexpected DATE_APPROXIMATED {" ++ val ++ "}"
+
+
 parseFamily obj (level, tag, value) nextTags (people, families) continue =
     continue obj

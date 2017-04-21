@@ -301,6 +301,18 @@ main = hspec $ do
             parseMultimediaFormat "abracadabra" `shouldBe` Custom
 
 
+    describe "parseDateApproximated" $ do
+        context "when valid input" $
+            it "returns valid value" $ do
+                parseDateApproximated "ABT" `shouldBe` About
+                parseDateApproximated "CAL" `shouldBe` Calculated
+                parseDateApproximated "EST" `shouldBe` Estimated
+
+        context "when value is unknown" $
+            it "throws an exception" $
+                evaluate (parseDateApproximated "abracadabra") `shouldThrow` errorCall "Unexpected DATE_APPROXIMATED {abracadabra}"
+
+
     describe "parseMultimediaLink" $
         it "builds MultimediaLink record" $ do
 

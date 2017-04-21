@@ -103,6 +103,7 @@ data RelationshipRole = Child | Husband | Wife | Mother | Father | Spouse | Cust
 data EventType = Anul | Cens | Div | Divf | Enga | Marr | Marb | Marc | Marl | Mars | Adop | Birt | Bapm | Barm | Basm | Bles | Buri | Chr | Chra | Conf | Crem | Deat | Emig | Fcom | Grad | Immi | Natu | Ordn | Reti | Prob | Will | Even | CustomEventType deriving (Show, Eq)
 data CertaintyAssessment = Unreliable | Questionable | Secondary | Direct deriving (Show, Eq)
 data MultimediaFormat = Bmp | Gif | Jpeg | Ole | Pcx | Tiff | Wav | Custom deriving (Show, Eq)
+data DateApproximated = About | Calculated | Estimated deriving (Show, Eq)
 
 
 data Note = Note {
