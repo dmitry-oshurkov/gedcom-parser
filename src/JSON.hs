@@ -7,14 +7,14 @@ import Model
 
 
 instance ToJSON Person where
-    toJSON (Person xref resn names gender sourceCitations multimedia notes) =
+    toJSON (Person xref resn names gender sourceCitations multimediaLinks notes) =
         object [
             "xref" .= xref,
             "resn" .= resn,
             "names" .= names,
             "gender" .= gender,
             "sourceCitations" .= sourceCitations,
-            "multimedia" .= multimedia,
+            "multimediaLinks" .= multimediaLinks,
             "notes" .= notes
         ]
 
@@ -53,13 +53,13 @@ instance ToJSON SourceCitation where
         ]
 
 instance ToJSON MultimediaLink where
-    toJSON (MultimediaLink xref format customFormat descriptiveTitle multimediaFileReference notes) =
+    toJSON (MultimediaLink xref format customFormat descriptiveTitle fileReference notes) =
         object [
             "xref" .= xref,
             "format" .= format,
             "customFormat" .= customFormat,
             "descriptiveTitle" .= descriptiveTitle,
-            "multimediaFileReference" .= multimediaFileReference,
+            "fileReference" .= fileReference,
             "notes" .= notes
         ]
 
