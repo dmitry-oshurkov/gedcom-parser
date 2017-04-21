@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "55e03bf620f097115212d12d98e18af4123c58ab"
+            sha1Hex (encode people) `shouldBe` "5e17b83196ec4f957fdc52ac9c1f326cdf1473fb"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -267,7 +267,7 @@ main = hspec $ do
                                         _page = Just 55,
                                         _srcNotes = [ newNote1 "@N7@" ],
                                         _multimedia = Just newMultimediaLink2 {
-                                            _note = Just $ newNote1 "@N26@"
+                                            _notes = [ newNote1 "@N26@" ]
                                         }
                                     }
                                 ],
@@ -315,5 +315,5 @@ main = hspec $ do
                                 _format = Just Jpeg,
                                 _descriptiveTitle = Just "Multimedia link about this source",
                                 _multimediaFileReference = Just "ImgFile.JPG",
-                                _note = Just $ newNote1 "@N26@"
+                                _notes = [ newNote1 "@N26@" ]
                            }

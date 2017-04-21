@@ -53,14 +53,14 @@ instance ToJSON SourceCitation where
         ]
 
 instance ToJSON MultimediaLink where
-    toJSON (MultimediaLink xref format customFormat descriptiveTitle multimediaFileReference note) =
+    toJSON (MultimediaLink xref format customFormat descriptiveTitle multimediaFileReference notes) =
         object [
             "xref" .= xref,
             "format" .= format,
             "customFormat" .= customFormat,
             "descriptiveTitle" .= descriptiveTitle,
             "multimediaFileReference" .= multimediaFileReference,
-            "note" .= note
+            "notes" .= notes
         ]
 
 instance ToJSON Event where

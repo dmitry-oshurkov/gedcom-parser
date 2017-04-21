@@ -82,11 +82,11 @@ data MultimediaLink = MultimediaLink {
     _customFormat :: Maybe String,
     _descriptiveTitle :: Maybe String,
     _multimediaFileReference :: Maybe String,
-    _note :: Maybe Note
+    _notes :: [Note]
 } deriving (Show, Eq)
 
-newMultimediaLink1 xref = MultimediaLink (Just xref) Nothing Nothing Nothing Nothing Nothing
-newMultimediaLink2 = MultimediaLink Nothing Nothing Nothing Nothing Nothing Nothing
+newMultimediaLink1 xref = MultimediaLink (Just xref) Nothing Nothing Nothing Nothing []
+newMultimediaLink2 = MultimediaLink Nothing Nothing Nothing Nothing Nothing []
 
 
 data Event = Event {

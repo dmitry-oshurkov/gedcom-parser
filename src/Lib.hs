@@ -151,7 +151,7 @@ parseMultimediaLink obj (level, tag, value) nextTags (people, families) continue
     newNote
         | hasXref = newNote1
         | hasText = newNote2
-    continue' o = continue $ set note (Just o) obj
+    continue' o = continue $ modify notes (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
