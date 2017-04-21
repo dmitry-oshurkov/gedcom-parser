@@ -134,7 +134,7 @@ parseData obj (level, tag, value) nextTags (people, families) continue
 
 
 parseMultimediaLink obj (level, tag, value) nextTags (people, families) continue
-    | tag == "FORM" = continue $ set format (Just $ parseMultimediaFormat value) obj
+    | tag == "FORM" = continue $ case parseMultimediaFormat value of { Custom -> set customFormat (Just value) (set format (Just Custom) obj); _ -> set format (Just $ parseMultimediaFormat value) obj }
     | tag == "TITL" = continue $ set descriptiveTitle (Just value) obj
     | tag == "FILE" = continue $ set multimediaFileReference (Just value) obj
     | tag == "NOTE" = bodyOf' (newNote value) continue' parseNote
@@ -270,7 +270,7 @@ parseMultimediaFormat val
     | val == "pcx" = Pcx
     | val == "tiff" = Tiff
     | val == "wav" = Wav
-    | otherwise = error $ "Unexpected MULTIMEDIA_FORMAT {" ++ val ++ "}"
+    | otherwise = Custom
 
 
 parseFamily obj (level, tag, value) nextTags (people, families) continue =

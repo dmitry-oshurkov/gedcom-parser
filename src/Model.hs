@@ -79,13 +79,14 @@ newData = Data Nothing Nothing
 data MultimediaLink = MultimediaLink {
     _mltXref :: Maybe String,
     _format :: Maybe MultimediaFormat,
+    _customFormat :: Maybe String,
     _descriptiveTitle :: Maybe String,
     _multimediaFileReference :: Maybe String,
     _note :: Maybe Note
 } deriving (Show, Eq)
 
-newMultimediaLink1 xref = MultimediaLink (Just xref) Nothing Nothing Nothing Nothing
-newMultimediaLink2 = MultimediaLink Nothing Nothing Nothing Nothing Nothing
+newMultimediaLink1 xref = MultimediaLink (Just xref) Nothing Nothing Nothing Nothing Nothing
+newMultimediaLink2 = MultimediaLink Nothing Nothing Nothing Nothing Nothing Nothing
 
 
 data Event = Event {
@@ -101,7 +102,7 @@ newEvent typ customType = Event typ (Just customType) Nothing Nothing
 data RelationshipRole = Child | Husband | Wife | Mother | Father | Spouse | CustomRelationshipRole deriving (Show, Eq)
 data EventType = Anul | Cens | Div | Divf | Enga | Marr | Marb | Marc | Marl | Mars | Adop | Birt | Bapm | Barm | Basm | Bles | Buri | Chr | Chra | Conf | Crem | Deat | Emig | Fcom | Grad | Immi | Natu | Ordn | Reti | Prob | Will | Even | CustomEventType deriving (Show, Eq)
 data CertaintyAssessment = Unreliable | Questionable | Secondary | Direct deriving (Show, Eq)
-data MultimediaFormat = Bmp | Gif | Jpeg | Ole | Pcx | Tiff | Wav deriving (Show, Eq)
+data MultimediaFormat = Bmp | Gif | Jpeg | Ole | Pcx | Tiff | Wav | Custom deriving (Show, Eq)
 
 
 data Note = Note {
