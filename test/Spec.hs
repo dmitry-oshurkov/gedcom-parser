@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "6f093e666b1a6ac1b5e4e28e276fcb4d16c6457b"
+            sha1Hex (encode people) `shouldBe` "0cd681d50951ab6a52f33c42b347c4935e1248ed"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 

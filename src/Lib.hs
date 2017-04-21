@@ -61,7 +61,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 ALIA @<XREF:INDI>@  {0:M}
 --     +1 ANCI @<XREF:SUBM>@  {0:M}
 --     +1 DESI @<XREF:SUBM>@  {0:M}
---     +1 <<MULTIMEDIA_LINK>>  {0:M}
+    | tag == "OBJE" = bodyOf' newMultimediaLink continue'' parseMultimediaLink
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue personSourceCitations personNotes
 --     +1 RFN <PERMANENT_RECORD_FILE_NUMBER>  {0:1}
 --     +1 AFN <ANCESTRAL_FILE_NUMBER>  {0:1}
@@ -71,7 +71,13 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 <<CHANGE_DATE>>  {0:1}
     | otherwise = continue obj
     where
+    hasXref = head value == '@'
+    hasText = head value /= '@'
+    newMultimediaLink
+        | not (null value) && hasXref = newMultimediaLink1 value
+        | null value = newMultimediaLink2
     continue' o = continue $ modify names (++ [o]) obj
+    continue'' o = continue $ modify personMultimediaLinks (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
