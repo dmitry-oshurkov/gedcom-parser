@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "1aa2ff61fcbd9a22b4f607f1808bbb1f716e83cf"
+            sha1Hex (encode people) `shouldBe` "cc9d477cdd648fc9c7847c36e6d549d60b0e88d3"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -105,7 +105,7 @@ main = hspec $ do
                                 (2, "NOTE", "T")
                             ]
                 bodyOf (newSourceCitation1 "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
-                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] Nothing Nothing [] Nothing
+                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] [] Nothing [] Nothing
 
         context "on second case" $
             it "builds SourceCitation record" $ do
@@ -129,7 +129,7 @@ main = hspec $ do
                     `shouldBe` (newSourceCitation2 "This source is embedded\nin the record") {
 
                                    _srcNotes = [ newNote1 "@N17@" ],
-                                   _text = Just "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source.",
+                                   _srcTexts = [ "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source." ],
                                    _dataQuality = Just Unreliable,
                                    _dat = Just newData {
                                         _dataDate = Just "1 JAN 1900",

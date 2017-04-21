@@ -123,7 +123,7 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
         | not (null value) && hasXref = newMultimediaLink1 value
         | null value = newMultimediaLink2
     continue' o = continue $ set event (Just o) obj
-    continue'' o = continue $ set text (Just o) obj
+    continue'' o = continue $ modify srcTexts (++ [o]) obj
     continue''' o = continue $ modify srcMultimediaLinks (++ [o]) obj
     continue'''' o = continue $ set dat (Just o) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)

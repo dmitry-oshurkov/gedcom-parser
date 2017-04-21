@@ -58,14 +58,14 @@ data SourceCitation = SourceCitation {
     _page :: Maybe Int,
     _event :: Maybe Event,
     _srcNotes :: [Note],
-    _text :: Maybe String,
+    _srcTexts :: [String],
     _dataQuality :: Maybe CertaintyAssessment,
     _srcMultimediaLinks :: [MultimediaLink],
     _dat :: Maybe Data
 } deriving (Show, Eq)
 
-newSourceCitation1 xref = SourceCitation (Just xref) "" Nothing Nothing [] Nothing Nothing [] Nothing
-newSourceCitation2 description = SourceCitation Nothing description Nothing Nothing [] Nothing Nothing [] Nothing
+newSourceCitation1 xref = SourceCitation (Just xref) "" Nothing Nothing [] [] Nothing [] Nothing
+newSourceCitation2 description = SourceCitation Nothing description Nothing Nothing [] [] Nothing [] Nothing
 
 
 data Data = Data {
