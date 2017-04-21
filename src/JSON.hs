@@ -79,6 +79,16 @@ instance ToJSON Data where
             "texts" .= texts
         ]
 
+instance ToJSON Date where
+    toJSON (Date firstDate secondDate phrase approx range) =
+        object [
+            "firstDate" .= firstDate,
+            "secondDate" .= secondDate,
+            "phrase" .= phrase,
+            "approx" .= approx,
+            "range" .= range
+        ]
+
 instance ToJSON RelationshipRole where
     toJSON = String . pack . show
 
@@ -89,6 +99,12 @@ instance ToJSON CertaintyAssessment where
     toJSON = String . pack . show
 
 instance ToJSON MultimediaFormat where
+    toJSON = String . pack . show
+
+instance ToJSON DateApproximated where
+    toJSON = String . pack . show
+
+instance ToJSON DateRange where
     toJSON = String . pack . show
 
 instance ToJSON Note where

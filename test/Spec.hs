@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "cc9d477cdd648fc9c7847c36e6d549d60b0e88d3"
+            sha1Hex (encode people) `shouldBe` "5bd441406b6d03f216561fcc578bc84753776ef7"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -132,7 +132,7 @@ main = hspec $ do
                                    _srcTexts = [ "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source." ],
                                    _dataQuality = Just Unreliable,
                                    _dat = Just newData {
-                                        _dataDate = Just "1 JAN 1900",
+                                        _dataDate = Just newDate,
                                         _dataTexts = [ "Here is some text from the source specific to this sourcecitation.\nHere is more text but on a new line." ]
                                    }
                                }
@@ -341,4 +341,21 @@ main = hspec $ do
                                 _descriptiveTitle = Just "Multimedia link about this source",
                                 _multimediaFileReference = Just "ImgFile.JPG",
                                 _notes = [ newNote1 "@N26@" ]
+                           }
+
+
+    describe "parseDate" $ do
+        it "builds Before Date record" $
+            parseDate "BEF 31 DEC 1997"
+                `shouldBe` newDate {
+                                _firstDate = Just "31 DEC 1997",
+                                _range = Just Before
+                           }
+
+        it "builds Between Date record" $
+            parseDate "BET 31 DEC 1997 AND 1 FEB 1998"
+                `shouldBe` newDate {
+                                _firstDate = Just "31 DEC 1997",
+                                _secondDate = Just "1 FEB 1998",
+                                _range = Just Between
                            }

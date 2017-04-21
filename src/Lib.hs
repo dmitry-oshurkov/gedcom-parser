@@ -117,13 +117,31 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
 
 
 parseData obj (level, tag, value) nextTags (people, families) continue
-    | tag == "DATE" = set' dataDate --todo: need parse date
+    | tag == "DATE" = continue $ set dataDate (Just $ parseDate value) obj
     | tag == "TEXT" = bodyOf' value continue' parseText
     | otherwise = continue obj
     where
-    set' fld = continue $ set fld (Just value) obj
     continue' o = continue $ modify dataTexts (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseDate val
+    | tag `elem` ["BEF", "AFT"] = newRangeDate (parseDateValue value) (parseDateRange tag)
+    | tag == "BET" = newBetweenDate (parseDateValue fstDate) (parseDateValue sndDate)
+    | otherwise = newDate
+    where
+    rq = (val :: String) =~ "(?<TAG>[A-Z_]{3,})?\\s+(?<VALUE>.+)?" :: [[String]]
+    match = head rq
+    tag = match!!1
+    value = match!!2
+
+    rq' = (value :: String) =~ "(?<DATE1>.+)?\\s+AND\\s+(?<DATE2>.+)?" :: [[String]]
+    match' = head rq'
+    fstDate = match'!!1
+    sndDate = match'!!2
+
+
+parseDateValue val = val
 
 
 parseMultimediaLink obj (level, tag, value) nextTags (people, families) continue

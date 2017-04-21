@@ -69,7 +69,7 @@ newSourceCitation2 description = SourceCitation Nothing description Nothing Noth
 
 
 data Data = Data {
-    _dataDate :: Maybe String,
+    _dataDate :: Maybe Date,
     _dataTexts :: [String]
 } deriving (Show, Eq)
 
@@ -109,6 +109,19 @@ newNote1 xref = Note (Just xref) "" []
 newNote2 submitterText = Note Nothing submitterText []
 
 
+data Date = Date {
+    _firstDate :: Maybe String,
+    _secondDate :: Maybe String,
+    _datePhrase :: Maybe String,
+    _approx :: Maybe DateApproximated,
+    _range :: Maybe DateRange
+} deriving (Show, Eq)
+
+newDate = Date Nothing Nothing Nothing Nothing Nothing
+newRangeDate firstDate range = Date (Just firstDate) Nothing Nothing Nothing (Just range)
+newBetweenDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing (Just Between)
+
+
 data Family = Family {
     _familyXref :: String
 } deriving (Show)
@@ -124,4 +137,4 @@ data DateApproximated = About | Calculated | Estimated deriving (Show, Eq)
 data DateRange = Before | After | Between deriving (Show, Eq)
 
 
-mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data ]
+mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date ]
