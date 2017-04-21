@@ -37,6 +37,35 @@ main = hspec $ do
             parseTag "0 @I14@ INDI" `shouldBe` (0, "@I14@", "INDI")
 
 
+    describe "parsePerson" $
+        it "builds Person record" $ do
+
+            let nextTags = getNextTags   "0 @PERSON2@ INDI\n\
+                                            \1 NAME Mary First /Jones/\n\
+                                            \1 SEX F\n\
+                                            \1 RESN privacy\n\
+                                            \1 BIRT\n\
+                                                \2 DATE BEF 1970\n\
+                                            \1 DEAT\n\
+                                                \2 DATE AFT 2000\n\
+                                            \1 FAMS @FAMILY1@\n\
+                                            \1 NOTE @N31@\n\
+                                            \1 CHAN\n\
+                                                \2 DATE 11 Jan 2001\n\
+                                                    \3 TIME 15:58:16\n\
+                                            \1 RIN 8\n\
+                                       \0 @I15@ INDI"
+
+            bodyOf (newPerson "@PERSON2@") 0 nextTags ([], []) id parsePerson
+                `shouldBe` (newPerson "@PERSON2@") {
+                                _personXref = "@PERSON2@",
+                                _resn = Privacy,
+                                _names = [ newName "Mary First /Jones/" ],
+                                _gender = Female,
+                                _personNotes = [ newNote1 "@N31@" ]
+                           }
+
+
     describe "parseName" $
         it "builds Name record" $ do
             {-

@@ -28,7 +28,7 @@ data Person = Person {
     --       +2 TYPE <USER_REFERENCE_TYPE>  {0:1}
     --     +1 RIN <AUTOMATED_RECORD_ID>  {0:1}
     --     +1 <<CHANGE_DATE>>  {0:1}
-} deriving (Show)
+} deriving (Show, Eq)
 
 newPerson xref = Person xref Free [] UnknownGender [] [] []
 
