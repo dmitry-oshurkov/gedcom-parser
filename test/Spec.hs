@@ -313,6 +313,18 @@ main = hspec $ do
                 evaluate (parseDateApproximated "abracadabra") `shouldThrow` errorCall "Unexpected DATE_APPROXIMATED {abracadabra}"
 
 
+    describe "parseDateRange" $ do
+        context "when valid input" $
+            it "returns valid value" $ do
+                parseDateRange "BEF" `shouldBe` Before
+                parseDateRange "AFT" `shouldBe` After
+                parseDateRange "BET" `shouldBe` Between
+
+        context "when value is unknown" $
+            it "throws an exception" $
+                evaluate (parseDateRange "abracadabra") `shouldThrow` errorCall "Unexpected DATE_RANGE {abracadabra}"
+
+
     describe "parseMultimediaLink" $
         it "builds MultimediaLink record" $ do
 

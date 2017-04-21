@@ -104,6 +104,7 @@ data EventType = Anul | Cens | Div | Divf | Enga | Marr | Marb | Marc | Marl | M
 data CertaintyAssessment = Unreliable | Questionable | Secondary | Direct deriving (Show, Eq)
 data MultimediaFormat = Bmp | Gif | Jpeg | Ole | Pcx | Tiff | Wav | Custom deriving (Show, Eq)
 data DateApproximated = About | Calculated | Estimated deriving (Show, Eq)
+data DateRange = Before | After | Between deriving (Show, Eq)
 
 
 data Note = Note {

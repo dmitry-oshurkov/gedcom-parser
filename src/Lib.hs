@@ -282,5 +282,12 @@ parseDateApproximated val
     | otherwise = error $ "Unexpected DATE_APPROXIMATED {" ++ val ++ "}"
 
 
+parseDateRange val
+    | val == "BEF" = Before
+    | val == "AFT" = After
+    | val == "BET" = Between
+    | otherwise = error $ "Unexpected DATE_RANGE {" ++ val ++ "}"
+
+
 parseFamily obj (level, tag, value) nextTags (people, families) continue =
     continue obj
