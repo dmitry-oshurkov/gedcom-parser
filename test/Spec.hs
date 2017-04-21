@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "0cd681d50951ab6a52f33c42b347c4935e1248ed"
+            sha1Hex (encode people) `shouldBe` "55e03bf620f097115212d12d98e18af4123c58ab"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -133,7 +133,7 @@ main = hspec $ do
                                    _dataQuality = Just Unreliable,
                                    _dat = Just newData {
                                         _dataDate = Just "1 JAN 1900",
-                                        _dataText = Just "Here is some text from the source specific to this sourcecitation.\nHere is more text but on a new line."
+                                        _dataTexts = [ "Here is some text from the source specific to this sourcecitation.\nHere is more text but on a new line." ]
                                    }
                                }
 

@@ -135,7 +135,7 @@ parseData obj (level, tag, value) nextTags (people, families) continue
     | otherwise = continue obj
     where
     set' fld = continue $ set fld (Just value) obj
-    continue' o = continue $ set dataText (Just o) obj
+    continue' o = continue $ modify dataTexts (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 

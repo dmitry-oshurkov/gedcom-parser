@@ -73,10 +73,10 @@ instance ToJSON Event where
         ]
 
 instance ToJSON Data where
-    toJSON (Data date text) =
+    toJSON (Data date texts) =
         object [
             "date" .= date,
-            "text" .= text
+            "texts" .= texts
         ]
 
 instance ToJSON RelationshipRole where

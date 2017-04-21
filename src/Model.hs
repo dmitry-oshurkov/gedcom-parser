@@ -70,10 +70,10 @@ newSourceCitation2 description = SourceCitation Nothing description Nothing Noth
 
 data Data = Data {
     _dataDate :: Maybe String,
-    _dataText :: Maybe String
+    _dataTexts :: [String]
 } deriving (Show, Eq)
 
-newData = Data Nothing Nothing
+newData = Data Nothing []
 
 
 data MultimediaLink = MultimediaLink {
