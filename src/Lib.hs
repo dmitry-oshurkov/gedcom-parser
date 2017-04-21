@@ -72,7 +72,6 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     | otherwise = continue obj
     where
     hasXref = head value == '@'
-    hasText = head value /= '@'
     newMultimediaLink
         | not (null value) && hasXref = newMultimediaLink1 value
         | null value = newMultimediaLink2
@@ -143,14 +142,11 @@ parseMultimediaLink obj (level, tag, value) nextTags (people, families) continue
     | tag == "FORM" = continue $ case parseMultimediaFormat value of { Custom -> set customFormat (Just value) (set format (Just Custom) obj); _ -> set format (Just $ parseMultimediaFormat value) obj }
     | tag == "TITL" = continue $ set descriptiveTitle (Just value) obj
     | tag == "FILE" = continue $ set multimediaFileReference (Just value) obj
-    | tag == "NOTE" = bodyOf' (newNote value) continue' parseNote
+    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText notes
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
-    newNote
-        | hasXref = newNote1
-        | hasText = newNote2
     continue' o = continue $ modify notes (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
