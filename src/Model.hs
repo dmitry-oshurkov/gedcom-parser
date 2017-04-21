@@ -60,12 +60,12 @@ data SourceCitation = SourceCitation {
     _srcNotes :: [Note],
     _text :: Maybe String,
     _dataQuality :: Maybe CertaintyAssessment,
-    _multimedia :: Maybe MultimediaLink,
+    _srcMultimediaLinks :: [MultimediaLink],
     _dat :: Maybe Data
 } deriving (Show, Eq)
 
-newSourceCitation1 xref = SourceCitation (Just xref) "" Nothing Nothing [] Nothing Nothing Nothing Nothing
-newSourceCitation2 description = SourceCitation Nothing description Nothing Nothing [] Nothing Nothing Nothing Nothing
+newSourceCitation1 xref = SourceCitation (Just xref) "" Nothing Nothing [] Nothing Nothing [] Nothing
+newSourceCitation2 description = SourceCitation Nothing description Nothing Nothing [] Nothing Nothing [] Nothing
 
 
 data Data = Data {

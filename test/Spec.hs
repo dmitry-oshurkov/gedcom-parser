@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "5e17b83196ec4f957fdc52ac9c1f326cdf1473fb"
+            sha1Hex (encode people) `shouldBe` "1f0bfdd3be6d00daf70eba4273a2ad93358156e2"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -105,7 +105,7 @@ main = hspec $ do
                                 (2, "NOTE", "T")
                             ]
                 bodyOf (newSourceCitation1 "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
-                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] Nothing Nothing Nothing Nothing
+                    `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] Nothing Nothing [] Nothing
 
         context "on second case" $
             it "builds SourceCitation record" $ do
@@ -266,9 +266,10 @@ main = hspec $ do
 
                                         _page = Just 55,
                                         _srcNotes = [ newNote1 "@N7@" ],
-                                        _multimedia = Just newMultimediaLink2 {
-                                            _notes = [ newNote1 "@N26@" ]
-                                        }
+                                        _srcMultimediaLinks = [ newMultimediaLink2 {
+                                                                    _notes = [ newNote1 "@N26@" ]
+                                                                }
+                                        ]
                                     }
                                 ],
                                 _nameNotes = [ newNote2 "This" ]
