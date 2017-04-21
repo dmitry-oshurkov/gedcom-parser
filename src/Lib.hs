@@ -80,18 +80,6 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
-parseResn val
-    | val == "locked" = Locked
-    | val == "privacy" = Privacy
-    | otherwise = error $ "Unexpected RESN {" ++ val ++ "}"
-
-
-parseGender val
-    | val == "M" = Male
-    | val == "F" = Female
-    | otherwise = error $ "Unexpected SEX {" ++ val ++ "}"
-
-
 parseName obj (level, tag, value) nextTags (people, families) continue
     | tag == "NPFX" = set' npfx
     | tag == "GIVN" = set' givn
@@ -209,6 +197,18 @@ parseNOTE obj level value nextTags (people, families) continue hasXref hasText n
 parseEvent obj (level, tag, value) nextTags (people, families) continue
     | tag == "ROLE" = continue obj
     | otherwise = continue obj
+
+
+parseResn val
+    | val == "locked" = Locked
+    | val == "privacy" = Privacy
+    | otherwise = error $ "Unexpected RESN {" ++ val ++ "}"
+
+
+parseGender val
+    | val == "M" = Male
+    | val == "F" = Female
+    | otherwise = error $ "Unexpected SEX {" ++ val ++ "}"
 
 
 parseRelationshipRole val

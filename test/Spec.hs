@@ -138,6 +138,74 @@ main = hspec $ do
                                }
 
 
+    describe "parseNote" $ do
+        context "on first case" $
+            it "builds Note record" $ do
+                {-
+                    4 NOTE @N26@
+                    4 FILE ImgFile.JPG
+                -}
+                let nextTags = [
+                                (4, "FILE", "ImgFile.JPG")
+                            ]
+                bodyOf (newNote1 "@N26@") 4 nextTags ([], []) id parseNote
+                    `shouldBe` Note (Just "@N26@") "" []
+
+        context "on second case" $
+            it "builds Note record" $ do
+                {-
+                    2 NOTE These are notes about the first NAME structure in this record. These notes are
+                        3 CONC embedded in the INDIVIDUAL record itself.
+                        3 CONT
+                        3 CONT The second name structure in this record uses all possible tags for a personal name
+                        3 CONC structure.
+                        3 CONT
+                        3 CONT NOTE: many applications are confused by two NAME structures.
+                    1 SEX M
+                -}
+                let nextTags = [
+                                (3, "CONC", "embedded in the INDIVIDUAL record itself."),
+                                (3, "CONT", ""),
+                                (3, "CONT", "The second name structure in this record uses all possible tags for a personal name "),
+                                (3, "CONC", "structure."),
+                                (3, "CONT", ""),
+                                (3, "CONT", "NOTE: many applications are confused by two NAME structures."),
+                                (1, "SEX", "M")
+                            ]
+                bodyOf (newNote2 "These are notes about the first NAME structure in this record. These notes are ") 2 nextTags ([], []) id parseNote
+                    `shouldBe` Note Nothing "These are notes about the first NAME structure in this record. These notes are embedded in the INDIVIDUAL record itself.\n\nThe second name structure in this record uses all possible tags for a personal name structure.\n\nNOTE: many applications are confused by two NAME structures." []
+
+
+    describe "bodyOf" $
+        it "parses next level tags only" $ do
+
+            let nextTags = splitContent  "2 SOUR @SOURCE1@\n\
+                                            \3 PAGE 55\n\
+                                            \3 OBJE\n\
+                                                \4 NOTE @N26@\n\
+                                            \3 NOTE @N7@\n\
+                                        \2 NOTE This\n\
+                                     \1 NAME Barry"
+
+            bodyOf (newName "Villy") 1 nextTags ([], []) id parseName
+                `shouldBe` (newName "Villy") {
+
+                                _nameSourceCitations = [
+
+                                    (newSourceCitation1 "@SOURCE1@") {
+
+                                        _page = Just 55,
+                                        _srcNotes = [ newNote1 "@N7@" ],
+                                        _srcMultimediaLinks = [ newMultimediaLink2 {
+                                                                    _notes = [ newNote1 "@N26@" ]
+                                                                }
+                                        ]
+                                    }
+                                ],
+                                _nameNotes = [ newNote2 "This" ]
+                            }
+
+
     describe "parseRelationshipRole" $
         it "returns valid value" $ do
             parseRelationshipRole "CHIL" `shouldBe` Child
@@ -206,74 +274,6 @@ main = hspec $ do
         context "when value is unknown" $
             it "throws an exception" $
                 evaluate (parseGender "abracadabra") `shouldThrow` errorCall "Unexpected SEX {abracadabra}"
-
-
-    describe "parseNote" $ do
-        context "on first case" $
-            it "builds Note record" $ do
-                {-
-                    4 NOTE @N26@
-                    4 FILE ImgFile.JPG
-                -}
-                let nextTags = [
-                                (4, "FILE", "ImgFile.JPG")
-                            ]
-                bodyOf (newNote1 "@N26@") 4 nextTags ([], []) id parseNote
-                    `shouldBe` Note (Just "@N26@") "" []
-
-        context "on second case" $
-            it "builds Note record" $ do
-                {-
-                    2 NOTE These are notes about the first NAME structure in this record. These notes are
-                        3 CONC embedded in the INDIVIDUAL record itself.
-                        3 CONT
-                        3 CONT The second name structure in this record uses all possible tags for a personal name
-                        3 CONC structure.
-                        3 CONT
-                        3 CONT NOTE: many applications are confused by two NAME structures.
-                    1 SEX M
-                -}
-                let nextTags = [
-                                (3, "CONC", "embedded in the INDIVIDUAL record itself."),
-                                (3, "CONT", ""),
-                                (3, "CONT", "The second name structure in this record uses all possible tags for a personal name "),
-                                (3, "CONC", "structure."),
-                                (3, "CONT", ""),
-                                (3, "CONT", "NOTE: many applications are confused by two NAME structures."),
-                                (1, "SEX", "M")
-                            ]
-                bodyOf (newNote2 "These are notes about the first NAME structure in this record. These notes are ") 2 nextTags ([], []) id parseNote
-                    `shouldBe` Note Nothing "These are notes about the first NAME structure in this record. These notes are embedded in the INDIVIDUAL record itself.\n\nThe second name structure in this record uses all possible tags for a personal name structure.\n\nNOTE: many applications are confused by two NAME structures." []
-
-
-    describe "bodyOf" $
-        it "parses next level tags only" $ do
-
-            let nextTags = splitContent  "2 SOUR @SOURCE1@\n\
-                                            \3 PAGE 55\n\
-                                            \3 OBJE\n\
-                                                \4 NOTE @N26@\n\
-                                            \3 NOTE @N7@\n\
-                                        \2 NOTE This\n\
-                                     \1 NAME Barry"
-
-            bodyOf (newName "Villy") 1 nextTags ([], []) id parseName
-                `shouldBe` (newName "Villy") {
-
-                                _nameSourceCitations = [
-
-                                    (newSourceCitation1 "@SOURCE1@") {
-
-                                        _page = Just 55,
-                                        _srcNotes = [ newNote1 "@N7@" ],
-                                        _srcMultimediaLinks = [ newMultimediaLink2 {
-                                                                    _notes = [ newNote1 "@N26@" ]
-                                                                }
-                                        ]
-                                    }
-                                ],
-                                _nameNotes = [ newNote2 "This" ]
-                            }
 
 
     describe "parseCertaintyAssessment" $ do
