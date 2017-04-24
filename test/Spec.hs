@@ -132,7 +132,7 @@ main = hspec $ do
                                    _srcTexts = [ "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source." ],
                                    _dataQuality = Just Unreliable,
                                    _dat = Just newData {
-                                        _dataDate = Just newDate { _firstDate = Just "1 JAN 1900"},
+                                        _dataDate = Just $ newDate "1 JAN 1900",
                                         _dataTexts = [ "Here is some text from the source specific to this sourcecitation.\nHere is more text but on a new line." ]
                                    }
                                }
@@ -347,44 +347,24 @@ main = hspec $ do
     describe "parseDate" $ do
         it "builds Before Date record" $
             parseDate "BEF 31 DEC 1997"
-                `shouldBe` newDate {
-                                _firstDate = Just "31 DEC 1997",
-                                _range = Just Before
-                           }
+                `shouldBe` newRangeDate "31 DEC 1997" Before
 
         it "builds Between Date record" $
             parseDate "BET 31 DEC 1997 AND 1 FEB 1998"
-                `shouldBe` newDate {
-                                _firstDate = Just "31 DEC 1997",
-                                _secondDate = Just "1 FEB 1998",
-                                _range = Just Between
-                           }
+                `shouldBe` newBetweenDate "31 DEC 1997" "1 FEB 1998"
 
         it "builds Calculated Date record" $
             parseDate "CAL 31 DEC 1990"
-                `shouldBe` newDate {
-                                _firstDate = Just "31 DEC 1990",
-                                _approx = Just Calculated
-                           }
+                `shouldBe` newApproxDate "31 DEC 1990" Calculated
 
         it "builds FromTo Date record" $
             parseDate "FROM 23 DEC 1980 TO 26 DEC 1980"
-                `shouldBe` newDate {
-                                _firstDate = Just "23 DEC 1980",
-                                _secondDate = Just "26 DEC 1980",
-                                _period = Just FromTo
-                           }
+                `shouldBe` newFromToDate "23 DEC 1980" "26 DEC 1980"
 
         it "builds From Date record" $
             parseDate "FROM 24 MAY 1981"
-                `shouldBe` newDate {
-                                _firstDate = Just "24 MAY 1981",
-                                _period = Just From
-                           }
+                `shouldBe` newPeriodDate "24 MAY 1981" From
 
         it "builds To Date record" $
             parseDate "TO 24 JUN 1982"
-                `shouldBe` newDate {
-                                _firstDate = Just "24 JUN 1982",
-                                _period = Just To
-                           }
+                `shouldBe` newPeriodDate "24 JUN 1982" To

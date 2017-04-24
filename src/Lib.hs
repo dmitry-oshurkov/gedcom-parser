@@ -130,7 +130,7 @@ parseDate val
     | tag == "BET" = newBetweenDate (parseDateValue match'!!1) (parseDateValue match'!!2)
     | tag `elem` ["ABT", "CAL", "EST"] = newApproxDate (parseDateValue value) (parseDateApproximated tag)
     | tag `elem` ["FROM", "TO"] = periodDate
-    | otherwise = newDate { _firstDate = Just (parseDateValue val) }
+    | otherwise = newDate $ parseDateValue val
     where
     rq = (val :: String) =~ "(?<TAG>[A-Z_]{2,})?\\s+(?<VALUE>.+)?" :: [[String]]
     match = head rq

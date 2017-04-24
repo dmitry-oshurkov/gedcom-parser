@@ -118,7 +118,7 @@ data Date = Date {
     _period :: Maybe DatePeriod
 } deriving (Show, Eq)
 
-newDate = Date Nothing Nothing Nothing Nothing Nothing Nothing
+newDate date = Date (Just date) Nothing Nothing Nothing Nothing Nothing
 newRangeDate firstDate range = Date (Just firstDate) Nothing Nothing Nothing (Just range) Nothing
 newBetweenDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing (Just Between) Nothing
 newApproxDate firstDate approx = Date (Just firstDate) Nothing Nothing (Just approx) Nothing Nothing
