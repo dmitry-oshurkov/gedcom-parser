@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "66aa86b4e533995ee39b39c53f10e551429782bb"
+            sha1Hex (encode people) `shouldBe` "ba762f3f530dd1bdeef91759c2cd9248672b2997"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -132,7 +132,7 @@ main = hspec $ do
                                    _srcTexts = [ "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source." ],
                                    _dataQuality = Just Unreliable,
                                    _dat = Just newData {
-                                        _dataDate = Just newDate,
+                                        _dataDate = Just newDate { _firstDate = Just "1 JAN 1900"},
                                         _dataTexts = [ "Here is some text from the source specific to this sourcecitation.\nHere is more text but on a new line." ]
                                    }
                                }
