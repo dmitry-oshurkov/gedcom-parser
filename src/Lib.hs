@@ -128,6 +128,7 @@ parseData obj (level, tag, value) nextTags (people, families) continue
 parseDate val
     | tag `elem` ["BEF", "AFT"] = newRangeDate (parseDateValue value) (parseDateRange tag)
     | tag == "BET" = newBetweenDate (parseDateValue fstDate) (parseDateValue sndDate)
+    | tag `elem` ["ABT", "CAL", "EST"] = newApproxDate (parseDateValue value) (parseDateApproximated tag)
     | otherwise = newDate
     where
     rq = (val :: String) =~ "(?<TAG>[A-Z_]{3,})?\\s+(?<VALUE>.+)?" :: [[String]]

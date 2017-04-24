@@ -359,3 +359,10 @@ main = hspec $ do
                                 _secondDate = Just "1 FEB 1998",
                                 _range = Just Between
                            }
+
+        it "builds Calculated Date record" $
+            parseDate "CAL 31 DEC 1990"
+                `shouldBe` newDate {
+                                _firstDate = Just "31 DEC 1990",
+                                _approx = Just Calculated
+                           }

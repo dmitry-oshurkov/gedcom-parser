@@ -120,6 +120,7 @@ data Date = Date {
 newDate = Date Nothing Nothing Nothing Nothing Nothing
 newRangeDate firstDate range = Date (Just firstDate) Nothing Nothing Nothing (Just range)
 newBetweenDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing (Just Between)
+newApproxDate firstDate approx = Date (Just firstDate) Nothing Nothing (Just approx) Nothing
 
 
 data Family = Family {
