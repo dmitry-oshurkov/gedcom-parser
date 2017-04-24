@@ -114,13 +114,16 @@ data Date = Date {
     _secondDate :: Maybe String,
     _datePhrase :: Maybe String,
     _approx :: Maybe DateApproximated,
-    _range :: Maybe DateRange
+    _range :: Maybe DateRange,
+    _period :: Maybe DatePeriod
 } deriving (Show, Eq)
 
-newDate = Date Nothing Nothing Nothing Nothing Nothing
-newRangeDate firstDate range = Date (Just firstDate) Nothing Nothing Nothing (Just range)
-newBetweenDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing (Just Between)
-newApproxDate firstDate approx = Date (Just firstDate) Nothing Nothing (Just approx) Nothing
+newDate = Date Nothing Nothing Nothing Nothing Nothing Nothing
+newRangeDate firstDate range = Date (Just firstDate) Nothing Nothing Nothing (Just range) Nothing
+newBetweenDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing (Just Between) Nothing
+newApproxDate firstDate approx = Date (Just firstDate) Nothing Nothing (Just approx) Nothing Nothing
+newPeriodDate firstDate period = Date (Just firstDate) Nothing Nothing Nothing Nothing (Just period)
+newFromToDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing Nothing (Just FromTo)
 
 
 data Family = Family {
@@ -136,6 +139,7 @@ data CertaintyAssessment = Unreliable | Questionable | Secondary | Direct derivi
 data MultimediaFormat = Bmp | Gif | Jpeg | Ole | Pcx | Tiff | Wav | Custom deriving (Show, Eq)
 data DateApproximated = About | Calculated | Estimated deriving (Show, Eq)
 data DateRange = Before | After | Between deriving (Show, Eq)
+data DatePeriod = From | To | FromTo deriving (Show, Eq)
 
 
 mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date ]

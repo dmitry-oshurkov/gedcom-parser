@@ -80,13 +80,14 @@ instance ToJSON Data where
         ]
 
 instance ToJSON Date where
-    toJSON (Date firstDate secondDate phrase approx range) =
+    toJSON (Date firstDate secondDate phrase approx range period) =
         object [
             "firstDate" .= firstDate,
             "secondDate" .= secondDate,
             "phrase" .= phrase,
             "approx" .= approx,
-            "range" .= range
+            "range" .= range,
+            "period" .= period
         ]
 
 instance ToJSON RelationshipRole where
@@ -105,6 +106,9 @@ instance ToJSON DateApproximated where
     toJSON = String . pack . show
 
 instance ToJSON DateRange where
+    toJSON = String . pack . show
+
+instance ToJSON DatePeriod where
     toJSON = String . pack . show
 
 instance ToJSON Note where

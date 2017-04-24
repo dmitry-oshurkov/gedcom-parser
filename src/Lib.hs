@@ -127,19 +127,27 @@ parseData obj (level, tag, value) nextTags (people, families) continue
 
 parseDate val
     | tag `elem` ["BEF", "AFT"] = newRangeDate (parseDateValue value) (parseDateRange tag)
-    | tag == "BET" = newBetweenDate (parseDateValue fstDate) (parseDateValue sndDate)
+    | tag == "BET" = newBetweenDate (parseDateValue match'!!1) (parseDateValue match'!!2)
     | tag `elem` ["ABT", "CAL", "EST"] = newApproxDate (parseDateValue value) (parseDateApproximated tag)
+    | tag `elem` ["FROM", "TO"] = periodDate
     | otherwise = newDate
     where
-    rq = (val :: String) =~ "(?<TAG>[A-Z_]{3,})?\\s+(?<VALUE>.+)?" :: [[String]]
+    rq = (val :: String) =~ "(?<TAG>[A-Z_]{2,})?\\s+(?<VALUE>.+)?" :: [[String]]
     match = head rq
     tag = match!!1
     value = match!!2
 
     rq' = (value :: String) =~ "(?<DATE1>.+)?\\s+AND\\s+(?<DATE2>.+)?" :: [[String]]
     match' = head rq'
-    fstDate = match'!!1
-    sndDate = match'!!2
+
+    rq'' = (value :: String) =~ "(?<DATE1>.+)?\\s+TO\\s+(?<DATE2>.+)?" :: [[String]]
+    match'' = head rq''
+    isNotMatch = null rq''
+    periodDate
+        | tag == "FROM" && not isNotMatch = newFromToDate (parseDateValue match''!!1) (parseDateValue match''!!2)
+        | tag == "FROM" && isNotMatch = newPeriodDate value From
+        | tag == "TO" && isNotMatch = newPeriodDate value To
+        | otherwise = newDate
 
 
 parseDateValue val = val

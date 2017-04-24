@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "5bd441406b6d03f216561fcc578bc84753776ef7"
+            sha1Hex (encode people) `shouldBe` "66aa86b4e533995ee39b39c53f10e551429782bb"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -365,4 +365,26 @@ main = hspec $ do
                 `shouldBe` newDate {
                                 _firstDate = Just "31 DEC 1990",
                                 _approx = Just Calculated
+                           }
+
+        it "builds FromTo Date record" $
+            parseDate "FROM 23 DEC 1980 TO 26 DEC 1980"
+                `shouldBe` newDate {
+                                _firstDate = Just "23 DEC 1980",
+                                _secondDate = Just "26 DEC 1980",
+                                _period = Just FromTo
+                           }
+
+        it "builds From Date record" $
+            parseDate "FROM 24 MAY 1981"
+                `shouldBe` newDate {
+                                _firstDate = Just "24 MAY 1981",
+                                _period = Just From
+                           }
+
+        it "builds To Date record" $
+            parseDate "TO 24 JUN 1982"
+                `shouldBe` newDate {
+                                _firstDate = Just "24 JUN 1982",
+                                _period = Just To
                            }
