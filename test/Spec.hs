@@ -368,3 +368,7 @@ main = hspec $ do
         it "builds To Date record" $
             parseDate "TO 24 JUN 1982"
                 `shouldBe` newPeriodDate "24 JUN 1982" To
+
+        it "builds DatePhrase Date record" $
+            parseDate "(near of 1972 and 1988 years)"
+                `shouldBe` newDatePhrase "near of 1972 and 1988 years"

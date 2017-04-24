@@ -124,6 +124,7 @@ newBetweenDate firstDate secondDate = Date (Just firstDate) (Just secondDate) No
 newApproxDate firstDate approx = Date (Just firstDate) Nothing Nothing (Just approx) Nothing Nothing
 newPeriodDate firstDate period = Date (Just firstDate) Nothing Nothing Nothing Nothing (Just period)
 newFromToDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing Nothing (Just FromTo)
+newDatePhrase phrase = Date Nothing Nothing (Just phrase) Nothing Nothing Nothing
 
 
 data Family = Family {

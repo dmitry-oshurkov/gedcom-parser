@@ -130,6 +130,7 @@ parseDate val
     | tag == "BET" = newBetweenDate (parseDateValue match'!!1) (parseDateValue match'!!2)
     | tag `elem` ["ABT", "CAL", "EST"] = newApproxDate (parseDateValue value) (parseDateApproximated tag)
     | tag `elem` ["FROM", "TO"] = periodDate
+    | not (null rq''') = newDatePhrase $ match'''!!1
     | otherwise = newDate $ parseDateValue val
     where
     rq = (val :: String) =~ "(?<TAG>[A-Z_]{2,})?\\s+(?<VALUE>.+)?" :: [[String]]
@@ -148,6 +149,9 @@ parseDate val
         | tag == "FROM" && isNotMatch = newPeriodDate value From
         | tag == "TO" && isNotMatch = newPeriodDate value To
         | otherwise = error $ "Unexpected DATE_PERIOD {" ++ val ++ "}"
+
+    rq''' = (val :: String) =~ "\\((?<DATE_PHRASE>.+)?\\)" :: [[String]]
+    match''' = head rq'''
 
 
 parseDateValue val = val
