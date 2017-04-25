@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "ba762f3f530dd1bdeef91759c2cd9248672b2997"
+            sha1Hex (encode people) `shouldBe` "541bba2ddfd84c2de7379d6b6b087c02e2d74b1f"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -372,3 +372,7 @@ main = hspec $ do
         it "builds DatePhrase Date record" $
             parseDate "(near of 1972 and 1988 years)"
                 `shouldBe` newDatePhrase "near of 1972 and 1988 years"
+
+        it "builds InterpretedDatePhrase Date record" $
+            parseDate "INT 1995 (from estimated age)"
+                `shouldBe` newInterpretedDatePhrase "1995" "from estimated age"

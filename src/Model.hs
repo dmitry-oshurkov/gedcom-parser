@@ -115,16 +115,18 @@ data Date = Date {
     _datePhrase :: Maybe String,
     _approx :: Maybe DateApproximated,
     _range :: Maybe DateRange,
-    _period :: Maybe DatePeriod
+    _period :: Maybe DatePeriod,
+    _isInterpreted :: Maybe Bool
 } deriving (Show, Eq)
 
-newDate date = Date (Just date) Nothing Nothing Nothing Nothing Nothing
-newRangeDate firstDate range = Date (Just firstDate) Nothing Nothing Nothing (Just range) Nothing
-newBetweenDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing (Just Between) Nothing
-newApproxDate firstDate approx = Date (Just firstDate) Nothing Nothing (Just approx) Nothing Nothing
-newPeriodDate firstDate period = Date (Just firstDate) Nothing Nothing Nothing Nothing (Just period)
-newFromToDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing Nothing (Just FromTo)
-newDatePhrase phrase = Date Nothing Nothing (Just phrase) Nothing Nothing Nothing
+newDate date = Date (Just date) Nothing Nothing Nothing Nothing Nothing Nothing
+newRangeDate firstDate range = Date (Just firstDate) Nothing Nothing Nothing (Just range) Nothing Nothing
+newBetweenDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing (Just Between) Nothing Nothing
+newApproxDate firstDate approx = Date (Just firstDate) Nothing Nothing (Just approx) Nothing Nothing Nothing
+newPeriodDate firstDate period = Date (Just firstDate) Nothing Nothing Nothing Nothing (Just period) Nothing
+newFromToDate firstDate secondDate = Date (Just firstDate) (Just secondDate) Nothing Nothing Nothing (Just FromTo) Nothing
+newDatePhrase phrase = Date Nothing Nothing (Just phrase) Nothing Nothing Nothing Nothing
+newInterpretedDatePhrase firstDate phrase = Date (Just firstDate) Nothing (Just phrase) Nothing Nothing Nothing (Just True)
 
 
 data Family = Family {
