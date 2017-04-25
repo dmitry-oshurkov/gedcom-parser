@@ -66,8 +66,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue personSourceCitations personNotes
     | tag == "RFN" = continue $ set recordFileNumber (Just value) obj
     | tag == "AFN" = continue $ set ancestralFileNumber (Just value) obj
---     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
---       +2 TYPE <USER_REFERENCE_TYPE>  {0:1}
+    | tag == "REFN" = bodyOf' (newUserReferenceNumber value) continue'''' parseUserReferenceNumber
     | tag == "RIN" = continue $ set recIdNumber (Just (read value :: Int)) obj
     | tag == "CHAN" = bodyOf' newChangeDate continue''' parseChangeDate
     | otherwise = continue obj
@@ -79,7 +78,13 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     continue' o = continue $ modify names (++ [o]) obj
     continue'' o = continue $ modify personMultimediaLinks (++ [o]) obj
     continue''' o = continue $ set personChangeDate (Just o) obj
+    continue'''' o = continue $ modify personUserReferenceNumbers (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseUserReferenceNumber obj (level, tag, value) nextTags (people, families) continue
+    | tag == "TYPE" = continue $ set refnType (Just value) obj
+    | otherwise = continue obj
 
 
 parseChangeDate obj (level, tag, value) nextTags (people, families) continue

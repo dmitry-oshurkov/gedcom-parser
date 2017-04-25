@@ -29,10 +29,11 @@ data Person = Person {
     --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
     --       +2 TYPE <USER_REFERENCE_TYPE>  {0:1}
     --     +1 RIN <AUTOMATED_RECORD_ID>  {0:1}
+    _personUserReferenceNumbers :: [UserReferenceNumber],
     _personChangeDate :: Maybe ChangeDate
 } deriving (Show, Eq)
 
-newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] Nothing Nothing Nothing Nothing
+newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] Nothing Nothing Nothing [] Nothing
 
 
 data ChangeDate = ChangeDate {
@@ -41,6 +42,14 @@ data ChangeDate = ChangeDate {
 } deriving (Show, Eq)
 
 newChangeDate = ChangeDate Nothing []
+
+
+data UserReferenceNumber = UserReferenceNumber {
+    _refnValue :: String,
+    _refnType :: Maybe String
+} deriving (Show, Eq)
+
+newUserReferenceNumber value = UserReferenceNumber value Nothing
 
 
 data Resn = Free | Locked | Privacy deriving (Show, Eq)
@@ -155,4 +164,4 @@ data DateRange = Before | After | Between deriving (Show, Eq)
 data DatePeriod = From | To | FromTo deriving (Show, Eq)
 
 
-mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date, ''ChangeDate ]
+mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date, ''ChangeDate, ''UserReferenceNumber ]

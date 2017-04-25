@@ -23,7 +23,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "4fd90512f37b1b4d681d8ccbdfc5e0bae4b5ad18"
+            sha1Hex (encode people) `shouldBe` "ff93cff6baf0a4c0ecb25290d3a4103d91d97d19"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -62,6 +62,8 @@ main = hspec $ do
                                                     \3 TIME 5:08:06\n\
                                                 \2 NOTE This date is the last time this record was changed\n\
                                             \1 RIN 8\n\
+                                            \1 REFN User Reference Number\n\
+                                                \2 TYPE User Reference Type\n\
                                        \0 @I15@ INDI"
 
             bodyOf (newPerson "@PERSON2@") 0 nextTags ([], []) id parsePerson
@@ -81,6 +83,7 @@ main = hspec $ do
                                                                 _changeDate = Just (UTCTime (fromGregorian 2001 01 11) (secondsToDiffTime 18486)),
                                                                 _changeNotes = [ newNote2 "This date is the last time this record was changed" ]
                                                             },
+                                _personUserReferenceNumbers = [ (newUserReferenceNumber "User Reference Number") { _refnType = Just "User Reference Type" } ],
                                 _recIdNumber = Just 8
                            }
 
