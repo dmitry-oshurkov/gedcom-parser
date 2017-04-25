@@ -23,7 +23,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "1edb1f1cec526cbd3cda66b72ed9684e25c754c0"
+            sha1Hex (encode people) `shouldBe` "bac1a4dd6501b840dfcdc907e7fccc22692c86a3"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -49,6 +49,9 @@ main = hspec $ do
                                                 \2 DATE BEF 1970\n\
                                             \1 DEAT\n\
                                                 \2 DATE AFT 2000\n\
+                                            \1 FAMC @ADOPTIVE_PARENTS@\n\
+                                                \2 PEDI adopted\n\
+                                                \2 NOTE Note about the link to his adoptive parents family record.\n\
                                             \1 FAMS @FAMILY1@\n\
                                                 \2 NOTE Note about the link to the family record with his first spouse.\n\
                                                 \2 NOTE Another note about the link to the family record with his first spouse.\n\
@@ -74,6 +77,11 @@ main = hspec $ do
                                 _resn = Privacy,
                                 _names = [ newName "Mary First /Jones/" ],
                                 _gender = Female,
+                                _childToFamilyLinks = [ (newChildToFamilyLink "@ADOPTIVE_PARENTS@") {
+                                                                _ctflPedigreeLinkageType = Just Adopted,
+                                                                _ctflNotes = [ newNote2 "Note about the link to his adoptive parents family record." ]
+                                                        }
+                                ],
                                 _spouseToFamilyLinks = [ (newSpouseToFamilyLink "@FAMILY1@") { _stflNotes = [ newNote2 "Note about the link to the family record with his first spouse.", newNote2 "Another note about the link to the family record with his first spouse." ] } ],
                                 _submitters = [ "@SUBMITTER@" ],
                                 _aliases = [ "@I9@" ],

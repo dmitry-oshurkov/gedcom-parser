@@ -55,7 +55,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
 --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
 --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
---     +1 <<CHILD_TO_FAMILY_LINK>>  {0:M}
+    | tag == "FAMC" = bodyOf' (newChildToFamilyLink value) continue'''''' parseChildToFamilyLink
     | tag == "FAMS" = bodyOf' (newSpouseToFamilyLink value) continue''''' parseSpouseToFamilyLink
     | tag == "SUBM" = continue $ modify submitters (++ [value]) obj
 --     +1 <<ASSOCIATION_STRUCTURE>>  {0:M}
@@ -80,7 +80,17 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     continue''' o = continue $ set personChangeDate (Just o) obj
     continue'''' o = continue $ modify personUserReferenceNumbers (++ [o]) obj
     continue''''' o = continue $ modify spouseToFamilyLinks (++ [o]) obj
+    continue'''''' o = continue $ modify childToFamilyLinks (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseChildToFamilyLink obj (level, tag, value) nextTags (people, families) continue
+    | tag == "PEDI" = continue $ set ctflPedigreeLinkageType (Just $ parsePedigreeLinkageType value) obj
+    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText ctflNotes
+    | otherwise = continue obj
+    where
+    hasXref = head value == '@'
+    hasText = head value /= '@'
 
 
 parseSpouseToFamilyLink obj (level, tag, value) nextTags (people, families) continue

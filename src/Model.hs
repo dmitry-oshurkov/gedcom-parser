@@ -13,7 +13,7 @@ data Person = Person {
     --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
     --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
     --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
-    --     +1 <<CHILD_TO_FAMILY_LINK>>  {0:M}
+    _childToFamilyLinks :: [ChildToFamilyLink],
     _spouseToFamilyLinks :: [SpouseToFamilyLink],
     _submitters :: [String],
     --     +1 <<ASSOCIATION_STRUCTURE>>  {0:M}
@@ -33,7 +33,16 @@ data Person = Person {
     _personChangeDate :: Maybe ChangeDate
 } deriving (Show, Eq)
 
-newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] [] Nothing Nothing Nothing [] Nothing
+newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] [] [] Nothing Nothing Nothing [] Nothing
+
+
+data ChildToFamilyLink = ChildToFamilyLink {
+    _ctflXref :: String,
+    _ctflPedigreeLinkageType :: Maybe PedigreeLinkageType,
+    _ctflNotes :: [Note]
+} deriving (Show, Eq)
+
+newChildToFamilyLink xref = ChildToFamilyLink xref Nothing []
 
 
 data SpouseToFamilyLink = SpouseToFamilyLink {
@@ -173,4 +182,4 @@ data DatePeriod = From | To | FromTo deriving (Show, Eq)
 data PedigreeLinkageType = Adopted | Birth | Foster | Sealing deriving (Show, Eq)
 
 
-mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date, ''ChangeDate, ''UserReferenceNumber, ''SpouseToFamilyLink ]
+mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date, ''ChangeDate, ''UserReferenceNumber, ''SpouseToFamilyLink, ''ChildToFamilyLink ]
