@@ -5,6 +5,7 @@ import Control.Exception (evaluate)
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
 import Crypto.Hash
+import Data.Time
 import Lib
 import Model
 import JSON
@@ -22,7 +23,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "82c9d4e19f2dfad53b5536170e7302a36b1aa691"
+            sha1Hex (encode people) `shouldBe` "4fd90512f37b1b4d681d8ccbdfc5e0bae4b5ad18"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -58,7 +59,8 @@ main = hspec $ do
                                             \1 AFN Ancestral File Number\n\
                                             \1 CHAN\n\
                                                 \2 DATE 11 Jan 2001\n\
-                                                    \3 TIME 15:58:16\n\
+                                                    \3 TIME 5:08:06\n\
+                                                \2 NOTE This date is the last time this record was changed\n\
                                             \1 RIN 8\n\
                                        \0 @I15@ INDI"
 
@@ -75,6 +77,10 @@ main = hspec $ do
                                 _personNotes = [ newNote1 "@N31@" ],
                                 _recordFileNumber = Just "Record File Number",
                                 _ancestralFileNumber = Just "Ancestral File Number",
+                                _personChangeDate = Just newChangeDate {
+                                                                _changeDate = Just (UTCTime (fromGregorian 2001 01 11) (secondsToDiffTime 18486)),
+                                                                _changeNotes = [ newNote2 "This date is the last time this record was changed" ]
+                                                            },
                                 _recIdNumber = Just 8
                            }
 

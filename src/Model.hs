@@ -2,6 +2,7 @@
 module Model where
 
 import Data.Label
+import Data.Time
 
 
 data Person = Person {
@@ -24,14 +25,22 @@ data Person = Person {
     _personNotes :: [Note],
     _recordFileNumber :: Maybe String,
     _ancestralFileNumber :: Maybe String,
-    _recIdNumber :: Maybe Int
+    _recIdNumber :: Maybe Int,
     --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
     --       +2 TYPE <USER_REFERENCE_TYPE>  {0:1}
     --     +1 RIN <AUTOMATED_RECORD_ID>  {0:1}
-    --     +1 <<CHANGE_DATE>>  {0:1}
+    _personChangeDate :: Maybe ChangeDate
 } deriving (Show, Eq)
 
-newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] Nothing Nothing Nothing
+newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] Nothing Nothing Nothing Nothing
+
+
+data ChangeDate = ChangeDate {
+    _changeDate :: Maybe UTCTime,
+    _changeNotes :: [Note]
+} deriving (Show, Eq)
+
+newChangeDate = ChangeDate Nothing []
 
 
 data Resn = Free | Locked | Privacy deriving (Show, Eq)
@@ -146,4 +155,4 @@ data DateRange = Before | After | Between deriving (Show, Eq)
 data DatePeriod = From | To | FromTo deriving (Show, Eq)
 
 
-mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date ]
+mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date, ''ChangeDate ]

@@ -4,6 +4,7 @@ module Lib where
 import Text.Regex.PCRE
 import Data.Label
 import Data.List.Split
+import Data.Time
 import Model
 
 
@@ -68,7 +69,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
 --       +2 TYPE <USER_REFERENCE_TYPE>  {0:1}
     | tag == "RIN" = continue $ set recIdNumber (Just (read value :: Int)) obj
---     +1 <<CHANGE_DATE>>  {0:1}
+    | tag == "CHAN" = bodyOf' newChangeDate continue''' parseChangeDate
     | otherwise = continue obj
     where
     hasXref = head value == '@'
@@ -77,7 +78,24 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
         | null value = newMultimediaLink2
     continue' o = continue $ modify names (++ [o]) obj
     continue'' o = continue $ modify personMultimediaLinks (++ [o]) obj
+    continue''' o = continue $ set personChangeDate (Just o) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseChangeDate obj (level, tag, value) nextTags (people, families) continue
+    | tag == "DATE" = bodyOf' value continue' parseExactDateTime
+    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText changeNotes
+    | otherwise = continue obj
+    where
+    hasXref = head value == '@'
+    hasText = head value /= '@'
+    continue' o = continue $ set changeDate (parseTimeM True defaultTimeLocale "%e %b %Y %k:%M:%S" o) obj
+    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseExactDateTime obj (level, tag, value) nextTags (people, families) continue
+    | tag == "TIME" = continue $ obj ++ " " ++ value
+    | otherwise = continue obj
 
 
 parseName obj (level, tag, value) nextTags (people, families) continue
