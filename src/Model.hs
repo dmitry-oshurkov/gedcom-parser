@@ -16,7 +16,7 @@ data Person = Person {
     --     +1 <<SPOUSE_TO_FAMILY_LINK>>  {0:M}
     --     +1 SUBM @<XREF:SUBM>@  {0:M}
     --     +1 <<ASSOCIATION_STRUCTURE>>  {0:M}
-    _aliasXref :: Maybe String,
+    _aliases :: [String],
     --     +1 ANCI @<XREF:SUBM>@  {0:M}
     --     +1 DESI @<XREF:SUBM>@  {0:M}
     _personSourceCitations :: [SourceCitation],
@@ -30,7 +30,7 @@ data Person = Person {
     --     +1 <<CHANGE_DATE>>  {0:1}
 } deriving (Show, Eq)
 
-newPerson xref = Person xref Free [] UnknownGender Nothing [] [] []
+newPerson xref = Person xref Free [] UnknownGender [] [] [] []
 
 
 data Resn = Free | Locked | Privacy deriving (Show, Eq)

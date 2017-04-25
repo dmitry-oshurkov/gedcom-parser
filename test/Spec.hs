@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "b56a140183f735d8f09a87aca53f65cb03ed3a2b"
+            sha1Hex (encode people) `shouldBe` "965c20a899b7f43e091599b0b5abf7300689e275"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -63,7 +63,7 @@ main = hspec $ do
                                 _resn = Privacy,
                                 _names = [ newName "Mary First /Jones/" ],
                                 _gender = Female,
-                                _aliasXref = Just "@I9@",
+                                _aliases = [ "@I9@" ],
                                 _personNotes = [ newNote1 "@N31@" ]
                            }
 
