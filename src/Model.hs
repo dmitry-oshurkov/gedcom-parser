@@ -170,6 +170,7 @@ data MultimediaFormat = Bmp | Gif | Jpeg | Ole | Pcx | Tiff | Wav | Custom deriv
 data DateApproximated = About | Calculated | Estimated deriving (Show, Eq)
 data DateRange = Before | After | Between deriving (Show, Eq)
 data DatePeriod = From | To | FromTo deriving (Show, Eq)
+data PedigreeLinkageType = Adopted | Birth | Foster | Sealing deriving (Show, Eq)
 
 
 mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date, ''ChangeDate, ''UserReferenceNumber, ''SpouseToFamilyLink ]

@@ -356,5 +356,13 @@ parseDateRange val
     | otherwise = error $ "Unexpected DATE_RANGE {" ++ val ++ "}"
 
 
+parsePedigreeLinkageType val
+    | val == "adopted" = Adopted
+    | val == "birth" = Birth
+    | val == "foster" = Foster
+    | val == "sealing" = Sealing
+    | otherwise = error $ "Unexpected PEDIGREE_LINKAGE_TYPE {" ++ val ++ "}"
+
+
 parseFamily obj (level, tag, value) nextTags (people, families) continue =
     continue obj

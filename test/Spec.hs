@@ -350,6 +350,19 @@ main = hspec $ do
                 evaluate (parseDateRange "abracadabra") `shouldThrow` errorCall "Unexpected DATE_RANGE {abracadabra}"
 
 
+    describe "parsePedigreeLinkageType" $ do
+        context "when valid input" $
+            it "returns valid value" $ do
+                parsePedigreeLinkageType "adopted" `shouldBe` Adopted
+                parsePedigreeLinkageType "birth" `shouldBe` Birth
+                parsePedigreeLinkageType "foster" `shouldBe` Foster
+                parsePedigreeLinkageType "sealing" `shouldBe` Sealing
+
+        context "when value is unknown" $
+            it "throws an exception" $
+                evaluate (parsePedigreeLinkageType "abracadabra") `shouldThrow` errorCall "Unexpected PEDIGREE_LINKAGE_TYPE {abracadabra}"
+
+
     describe "parseMultimediaLink" $
         it "builds MultimediaLink record" $ do
 

@@ -144,6 +144,9 @@ instance ToJSON DateRange where
 instance ToJSON DatePeriod where
     toJSON = String . pack . show
 
+instance ToJSON PedigreeLinkageType where
+    toJSON = String . pack . show
+
 instance ToJSON Note where
     toJSON (Note xref submitterText sourceCitations) =
         object [
