@@ -22,7 +22,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "8fbc0c70b56a3689a373911f34e6c6bda4e00ebe"
+            sha1Hex (encode people) `shouldBe` "82c9d4e19f2dfad53b5536170e7302a36b1aa691"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -74,7 +74,8 @@ main = hspec $ do
                                 _descendantsInterests = [ "@SUBMITTER@" ],
                                 _personNotes = [ newNote1 "@N31@" ],
                                 _recordFileNumber = Just "Record File Number",
-                                _ancestralFileNumber = Just "Ancestral File Number"
+                                _ancestralFileNumber = Just "Ancestral File Number",
+                                _recIdNumber = Just 8
                            }
 
 

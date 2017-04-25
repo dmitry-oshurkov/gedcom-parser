@@ -67,7 +67,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "AFN" = continue $ set ancestralFileNumber (Just value) obj
 --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
 --       +2 TYPE <USER_REFERENCE_TYPE>  {0:1}
---     +1 RIN <AUTOMATED_RECORD_ID>  {0:1}
+    | tag == "RIN" = continue $ set recIdNumber (Just (read value :: Int)) obj
 --     +1 <<CHANGE_DATE>>  {0:1}
     | otherwise = continue obj
     where

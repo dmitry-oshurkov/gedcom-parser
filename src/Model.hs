@@ -23,14 +23,15 @@ data Person = Person {
     _personMultimediaLinks :: [MultimediaLink],
     _personNotes :: [Note],
     _recordFileNumber :: Maybe String,
-    _ancestralFileNumber :: Maybe String
+    _ancestralFileNumber :: Maybe String,
+    _recIdNumber :: Maybe Int
     --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
     --       +2 TYPE <USER_REFERENCE_TYPE>  {0:1}
     --     +1 RIN <AUTOMATED_RECORD_ID>  {0:1}
     --     +1 <<CHANGE_DATE>>  {0:1}
 } deriving (Show, Eq)
 
-newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] Nothing Nothing
+newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] Nothing Nothing Nothing
 
 
 data Resn = Free | Locked | Privacy deriving (Show, Eq)
