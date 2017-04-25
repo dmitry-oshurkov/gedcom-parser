@@ -14,7 +14,7 @@ data Person = Person {
     --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
     --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
     --     +1 <<CHILD_TO_FAMILY_LINK>>  {0:M}
-    --     +1 <<SPOUSE_TO_FAMILY_LINK>>  {0:M}
+    _spouseToFamilyLinks :: [SpouseToFamilyLink],
     _submitters :: [String],
     --     +1 <<ASSOCIATION_STRUCTURE>>  {0:M}
     _aliases :: [String],
@@ -33,7 +33,15 @@ data Person = Person {
     _personChangeDate :: Maybe ChangeDate
 } deriving (Show, Eq)
 
-newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] Nothing Nothing Nothing [] Nothing
+newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] [] Nothing Nothing Nothing [] Nothing
+
+
+data SpouseToFamilyLink = SpouseToFamilyLink {
+    _stflXref :: String,
+    _stflNotes :: [Note]
+} deriving (Show, Eq)
+
+newSpouseToFamilyLink xref = SpouseToFamilyLink xref []
 
 
 data ChangeDate = ChangeDate {
@@ -164,4 +172,4 @@ data DateRange = Before | After | Between deriving (Show, Eq)
 data DatePeriod = From | To | FromTo deriving (Show, Eq)
 
 
-mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date, ''ChangeDate, ''UserReferenceNumber ]
+mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date, ''ChangeDate, ''UserReferenceNumber, ''SpouseToFamilyLink ]

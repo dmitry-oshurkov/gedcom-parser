@@ -7,12 +7,13 @@ import Model
 
 
 instance ToJSON Person where
-    toJSON (Person xref resn names gender submitters aliases ancestorsInterests descendantsInterests sourceCitations multimediaLinks notes recordFileNumber ancestralFileNumber recIdNumber personUserReferenceNumbers personChangeDate) =
+    toJSON (Person xref resn names gender spouseToFamilyLinks submitters aliases ancestorsInterests descendantsInterests sourceCitations multimediaLinks notes recordFileNumber ancestralFileNumber recIdNumber personUserReferenceNumbers personChangeDate) =
         object [
             "xref" .= xref,
             "resn" .= resn,
             "names" .= names,
             "gender" .= gender,
+            "spouseToFamilyLinks" .= spouseToFamilyLinks,
             "submitters" .= submitters,
             "aliases" .= aliases,
             "ancestorsInterests" .= ancestorsInterests,
@@ -33,6 +34,13 @@ instance ToJSON Resn where
 
 instance ToJSON Gender where
     toJSON = String . pack . show
+
+instance ToJSON SpouseToFamilyLink where
+    toJSON (SpouseToFamilyLink xref notes) =
+        object [
+            "xref" .= xref,
+            "notes" .= notes
+        ]
 
 instance ToJSON ChangeDate where
     toJSON (ChangeDate date notes) =
