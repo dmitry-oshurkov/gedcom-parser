@@ -395,3 +395,16 @@ main = hspec $ do
         it "builds InterpretedDatePhrase Date record" $
             parseDate "INT 1995 (from estimated age)"
                 `shouldBe` newInterpretedDatePhrase "1995" "from estimated age"
+
+
+    describe "parseChangeDate" $
+        it "parses date without time" $ do
+
+            let nextTags = getNextTags "1 CHAN\n\
+                                        \2 DATE 18 Jul 2005\n\
+                                      \1 RIN 12"
+
+            bodyOf newChangeDate 1 nextTags ([], []) id parseChangeDate
+                `shouldBe` newChangeDate {
+                                _changeDate = Just (UTCTime (fromGregorian 2005 07 18) (secondsToDiffTime 0))
+                           }

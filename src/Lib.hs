@@ -83,19 +83,19 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 
 
 parseChangeDate obj (level, tag, value) nextTags (people, families) continue
-    | tag == "DATE" = bodyOf' value continue' parseExactDateTime
+    | tag == "DATE" = bodyOf' ("%e %b %Y", value) continue' parseExactDateTime
     | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText changeNotes
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
-    continue' o = continue $ set changeDate (parseTimeM True defaultTimeLocale "%e %b %Y %k:%M:%S" o) obj
+    continue' (fmt, val) = continue $ set changeDate (parseTimeM True defaultTimeLocale fmt val) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
-parseExactDateTime obj (level, tag, value) nextTags (people, families) continue
-    | tag == "TIME" = continue $ obj ++ " " ++ value
-    | otherwise = continue obj
+parseExactDateTime (fmt, val) (level, tag, value) nextTags (people, families) continue
+    | tag == "TIME" = continue (fmt ++ " %k:%M:%S", val ++ " " ++ value)
+    | otherwise = continue (fmt, val)
 
 
 parseName obj (level, tag, value) nextTags (people, families) continue
