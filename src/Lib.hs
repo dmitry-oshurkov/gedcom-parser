@@ -63,8 +63,8 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "DESI" = continue $ modify descendantsInterests (++ [value]) obj
     | tag == "OBJE" = bodyOf' newMultimediaLink continue'' parseMultimediaLink
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue personSourceCitations personNotes
---     +1 RFN <PERMANENT_RECORD_FILE_NUMBER>  {0:1}
---     +1 AFN <ANCESTRAL_FILE_NUMBER>  {0:1}
+    | tag == "RFN" = continue $ set recordFileNumber (Just value) obj
+    | tag == "AFN" = continue $ set ancestralFileNumber (Just value) obj
 --     +1 REFN <USER_REFERENCE_NUMBER>  {0:M}
 --       +2 TYPE <USER_REFERENCE_TYPE>  {0:1}
 --     +1 RIN <AUTOMATED_RECORD_ID>  {0:1}
