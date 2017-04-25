@@ -59,8 +59,8 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 SUBM @<XREF:SUBM>@  {0:M}
 --     +1 <<ASSOCIATION_STRUCTURE>>  {0:M}
     | tag == "ALIA" = continue $ modify aliases (++ [value]) obj
---     +1 ANCI @<XREF:SUBM>@  {0:M}
---     +1 DESI @<XREF:SUBM>@  {0:M}
+    | tag == "ANCI" = continue $ modify ancestorsInterests (++ [value]) obj
+    | tag == "DESI" = continue $ modify descendantsInterests (++ [value]) obj
     | tag == "OBJE" = bodyOf' newMultimediaLink continue'' parseMultimediaLink
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue personSourceCitations personNotes
 --     +1 RFN <PERMANENT_RECORD_FILE_NUMBER>  {0:1}
