@@ -58,7 +58,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 <<SPOUSE_TO_FAMILY_LINK>>  {0:M}
 --     +1 SUBM @<XREF:SUBM>@  {0:M}
 --     +1 <<ASSOCIATION_STRUCTURE>>  {0:M}
---     +1 ALIA @<XREF:INDI>@  {0:M}
+    | tag == "ALIA" = continue $ set aliasXref (Just value) obj
 --     +1 ANCI @<XREF:SUBM>@  {0:M}
 --     +1 DESI @<XREF:SUBM>@  {0:M}
     | tag == "OBJE" = bodyOf' newMultimediaLink continue'' parseMultimediaLink
