@@ -14,7 +14,7 @@ data Person = Person {
     --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
     --     +1 <<CHILD_TO_FAMILY_LINK>>  {0:M}
     --     +1 <<SPOUSE_TO_FAMILY_LINK>>  {0:M}
-    --     +1 SUBM @<XREF:SUBM>@  {0:M}
+    _submitters :: [String],
     --     +1 <<ASSOCIATION_STRUCTURE>>  {0:M}
     _aliases :: [String],
     _ancestorsInterests :: [String],
@@ -30,7 +30,7 @@ data Person = Person {
     --     +1 <<CHANGE_DATE>>  {0:1}
 } deriving (Show, Eq)
 
-newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] []
+newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] []
 
 
 data Resn = Free | Locked | Privacy deriving (Show, Eq)

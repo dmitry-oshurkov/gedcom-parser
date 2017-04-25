@@ -56,7 +56,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
 --     +1 <<CHILD_TO_FAMILY_LINK>>  {0:M}
 --     +1 <<SPOUSE_TO_FAMILY_LINK>>  {0:M}
---     +1 SUBM @<XREF:SUBM>@  {0:M}
+    | tag == "SUBM" = continue $ modify submitters (++ [value]) obj
 --     +1 <<ASSOCIATION_STRUCTURE>>  {0:M}
     | tag == "ALIA" = continue $ modify aliases (++ [value]) obj
     | tag == "ANCI" = continue $ modify ancestorsInterests (++ [value]) obj
