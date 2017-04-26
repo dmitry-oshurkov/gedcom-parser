@@ -223,17 +223,16 @@ parseCommon obj tag value continue text
     modify' val = continue $ modify text val obj
 
 
-parseCommon2 :: (Eq t3, Num t3) => t4 -> (t3, String, String) -> [(t3, String, String)] -> (t1, t2) -> (t4 -> t) -> t4 :-> [SourceCitation] -> t4 :-> [Note] -> t
 parseCommon2 obj (level, tag, value) nextTags result continue sourceCitations notes
     | tag == "SOUR" = parseSOUR obj level value nextTags result continue sourceCitations
     | tag == "NOTE" = parseNOTE obj level value nextTags result continue notes
     | otherwise = continue obj
 
 
-parseSOUR obj level value nextTags result continue sourceCitations7 =
+parseSOUR obj level value nextTags result continue sourceCitations =
     parseBody (newSourceCitation value) level (tail nextTags) result continue' parseSourceCitation
     where
-    continue' o = continue $ modify sourceCitations7 (++ [o]) obj
+    continue' o = continue $ modify sourceCitations (++ [o]) obj
 
 
 parseNOTE :: (Eq t4, Num t4) => t5 -> t4 -> String -> [(t4, String, String)] -> (t1, t2) -> (t5 -> t) -> t5 :-> [Note] -> t
