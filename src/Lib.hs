@@ -70,14 +70,14 @@ parsePerson obj (level, tag, value) nextTags result continue
     | tag == "AFN" = setField ancestralFileNumber value
     | tag == "REFN" = modifyList' personUserReferenceNumbers newUserReferenceNumber parseUserReferenceNumber
     | tag == "RIN" = setField recIdNumber (read value :: Int)
-    | tag == "CHAN" = bodyOf' personChangeDate setField newChangeDate parseChangeDate
+    | tag == "CHAN" = parseBody' personChangeDate setField newChangeDate parseChangeDate
     | otherwise = continue obj
     where
     modifyList field o = continue $ modify field (++ [o]) obj
     setField' field val = continue $ set field val obj
     setField field val = setField' field (Just val)
-    bodyOf' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
-    modifyList' field newObjFun = bodyOf' field modifyList (newObjFun value)
+    parseBody' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
+    modifyList' field newObjFun = parseBody' field modifyList (newObjFun value)
 
 
 parseAssociation obj (level, tag, value) nextTags result continue
@@ -109,14 +109,14 @@ parseUserReferenceNumber obj (level, tag, value) nextTags result continue
 
 
 parseChangeDate obj (level, tag, value) nextTags result continue
-    | tag == "DATE" = bodyOf' ("%e %b %Y", value) continue' parseExactDateTime
+    | tag == "DATE" = parseBody' ("%e %b %Y", value) continue' parseExactDateTime
     | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText changeNotes
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
     continue' (fmt, val) = continue $ set changeDate (parseTimeM True defaultTimeLocale fmt val) obj
-    bodyOf' newObj = parseBody newObj level (tail nextTags) result
+    parseBody' newObj = parseBody newObj level (tail nextTags) result
 
 
 parseExactDateTime (fmt, val) (level, tag, value) nextTags result continue
@@ -139,30 +139,30 @@ parseName obj (level, tag, value) nextTags result continue
 
 parseSourceCitation obj (level, tag, value) nextTags result continue
     | tag == "PAGE" = setField page (read value :: Int)
-    | tag == "EVEN" = bodyOf' event setField (newEvent (parseEventType value) value) parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
+    | tag == "EVEN" = parseBody' event setField (newEvent (parseEventType value) value) parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
     | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText srcNotes
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
-    | tag == "TEXT" = bodyOf' srcTexts modifyList value parseText
+    | tag == "TEXT" = parseBody' srcTexts modifyList value parseText
     | tag == "QUAY" = setField dataQuality (parseCertaintyAssessment value)
     | tag == "OBJE" = modifyList' srcMultimediaLinks newMultimediaLink parseMultimediaLink
-    | tag == "DATA" = bodyOf' dat setField newData parseData
+    | tag == "DATA" = parseBody' dat setField newData parseData
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
     modifyList field o = continue $ modify field (++ [o]) obj
     setField field val = continue $ set field (Just val) obj
-    bodyOf' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
-    modifyList' field newObjFun = bodyOf' field modifyList (newObjFun value)
+    parseBody' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
+    modifyList' field newObjFun = parseBody' field modifyList (newObjFun value)
 
 
 parseData obj (level, tag, value) nextTags result continue
     | tag == "DATE" = continue $ set dataDate (Just $ parseDate value) obj
-    | tag == "TEXT" = bodyOf' value continue' parseText
+    | tag == "TEXT" = parseBody' value continue' parseText
     | otherwise = continue obj
     where
     continue' o = continue $ modify dataTexts (++ [o]) obj
-    bodyOf' newObj = parseBody newObj level (tail nextTags) result
+    parseBody' newObj = parseBody newObj level (tail nextTags) result
 
 
 parseDate val
@@ -211,7 +211,7 @@ parseMultimediaLink obj (level, tag, value) nextTags result continue
     hasXref = head value == '@'
     hasText = head value /= '@'
     continue' o = continue $ modify notes (++ [o]) obj
-    bodyOf' newObj = parseBody newObj level (tail nextTags) result
+    parseBody' newObj = parseBody newObj level (tail nextTags) result
 
 
 parseText obj (level, tag, value) nextTags result continue
@@ -249,24 +249,24 @@ parseCommon2 obj (level, tag, value) nextTags result continue sourceCitations no
 
 parseSOUR :: (Eq t3, Num t3) => t4 -> t3 -> String -> [(t3, String, String)] -> (t1, t2) -> (t4 -> t) -> Bool -> Bool -> t4 :-> [SourceCitation] -> t
 parseSOUR obj level value nextTags result continue hasXref hasText sourceCitations7 =
-    bodyOf' (newSourceCitation value) continue' parseSourceCitation
+    parseBody' (newSourceCitation value) continue' parseSourceCitation
     where
     newSourceCitation
         | hasXref = newSourceCitation1
         | hasText = newSourceCitation2
     continue' o = continue $ modify sourceCitations7 (++ [o]) obj
-    bodyOf' newObj = parseBody newObj level (tail nextTags) result
+    parseBody' newObj = parseBody newObj level (tail nextTags) result
 
 
 parseNOTE :: (Eq t4, Num t4) => t5 -> t4 -> String -> [(t4, String, String)] -> (t1, t2) -> (t5 -> t) -> Bool -> Bool -> t5 :-> [Note] -> t
 parseNOTE obj level value nextTags result continue hasXref hasText notes =
-    bodyOf' (newNote value) continue' parseNote
+    parseBody' (newNote value) continue' parseNote
     where
     newNote
         | hasXref = newNote1
         | hasText = newNote2
     continue' o = continue $ modify notes (++ [o]) obj
-    bodyOf' newObj = parseBody newObj level (tail nextTags) result
+    parseBody' newObj = parseBody newObj level (tail nextTags) result
 
 
 parseEvent obj (level, tag, value) nextTags result continue
