@@ -201,9 +201,6 @@ parseMultimediaLink obj (level, tag, value) nextTags result continue
     | tag == "FILE" = continue $ set multimediaFileReference (Just value) obj
     | tag == "NOTE" = parseNOTE obj level value nextTags result continue notes
     | otherwise = continue obj
-    where
-    continue' o = continue $ modify notes (++ [o]) obj
-    parseBody' newObj = parseBody newObj level (tail nextTags) result
 
 
 parseText obj (level, tag, value) nextTags result continue
