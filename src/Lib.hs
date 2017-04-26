@@ -152,10 +152,10 @@ parseSourceCitation obj (level, tag, value) nextTags result continue
 
 parseData obj (level, tag, value) nextTags result continue
     | tag == "DATE" = continue $ set dataDate (Just $ parseDate value) obj
-    | tag == "TEXT" = parseBody' value continue' parseText
+    | tag == "TEXT" = parseBody' value modify' parseText
     | otherwise = continue obj
     where
-    continue' o = continue $ modify dataTexts (++ [o]) obj
+    modify' = modifyList continue obj dataTexts
     parseBody' newObj = parseBody newObj level (tail nextTags) result
 
 
@@ -230,16 +230,16 @@ parseCommon2 obj (level, tag, value) nextTags result continue sourceCitations no
 
 
 parseSOUR obj level value nextTags result continue sourceCitations =
-    parseBody (newSourceCitation value) level (tail nextTags) result continue' parseSourceCitation
+    parseBody (newSourceCitation value) level (tail nextTags) result modify' parseSourceCitation
     where
-    continue' o = continue $ modify sourceCitations (++ [o]) obj
+    modify' = modifyList continue obj sourceCitations
 
 
 parseNOTE :: (Eq t4, Num t4) => t5 -> t4 -> String -> [(t4, String, String)] -> (t1, t2) -> (t5 -> t) -> t5 :-> [Note] -> t
 parseNOTE obj level value nextTags result continue notes =
-    parseBody (newNote value) level (tail nextTags) result continue' parseNote
+    parseBody (newNote value) level (tail nextTags) result modify' parseNote
     where
-    continue' o = continue $ modify notes (++ [o]) obj
+    modify' = modifyList continue obj notes
 
 
 parseEvent obj (level, tag, value) nextTags result continue
