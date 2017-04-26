@@ -50,7 +50,6 @@ parseTopLevel (level, xref, tag) nextTags (people, families) continue
 
 parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "RESN" = continue $ set resn (parseResn value) obj
---     | tag == "NAME" = bodyOf'' newName continue' parseName
     | tag == "NAME" = modifyList' names newName parseName
     | tag == "SEX" = continue $ set gender (parseGender value) obj
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
@@ -63,28 +62,23 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "ALIA" = modifyList aliases value
     | tag == "ANCI" = modifyList ancestorsInterests value
     | tag == "DESI" = modifyList descendantsInterests value
-    | tag == "OBJE" = bodyOf' newMultimediaLink continue'' parseMultimediaLink
+    | tag == "OBJE" = bodyOf' personMultimediaLinks modifyList newMultimediaLink parseMultimediaLink
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue personSourceCitations personNotes
     | tag == "RFN" = setField recordFileNumber value
     | tag == "AFN" = setField ancestralFileNumber value
     | tag == "REFN" = modifyList' personUserReferenceNumbers newUserReferenceNumber parseUserReferenceNumber
     | tag == "RIN" = setField recIdNumber (read value :: Int)
-    | tag == "CHAN" = bodyOf' newChangeDate continue''' parseChangeDate
+    | tag == "CHAN" = bodyOf' personChangeDate setField newChangeDate parseChangeDate
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     newMultimediaLink
         | not (null value) && hasXref = newMultimediaLink1 value
         | null value = newMultimediaLink2
-
     modifyList field o = continue $ modify field (++ [o]) obj
     setField field val = continue $ set field (Just val) obj
-
-    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
-    modifyList' field newObjFun = bodyOf' (newObjFun value) (modifyList field)
-
-    continue'' = modifyList personMultimediaLinks
-    continue''' = setField personChangeDate
+    bodyOf' field setFieldFun newObj = bodyOf newObj level (tail nextTags) (people, families) (setFieldFun field)
+    modifyList' field newObjFun = bodyOf' field modifyList (newObjFun value)
 
 
 parseAssociation obj (level, tag, value) nextTags (people, families) continue
