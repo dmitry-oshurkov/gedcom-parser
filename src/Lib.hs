@@ -231,18 +231,16 @@ parseCommon2 obj (level, tag, value) nextTags result continue sourceCitations no
 
 
 parseSOUR obj level value nextTags result continue sourceCitations7 =
-    parseBody' (newSourceCitation value) continue' parseSourceCitation
+    parseBody (newSourceCitation value) level (tail nextTags) result continue' parseSourceCitation
     where
     continue' o = continue $ modify sourceCitations7 (++ [o]) obj
-    parseBody' newObj = parseBody newObj level (tail nextTags) result
 
 
 parseNOTE :: (Eq t4, Num t4) => t5 -> t4 -> String -> [(t4, String, String)] -> (t1, t2) -> (t5 -> t) -> t5 :-> [Note] -> t
 parseNOTE obj level value nextTags result continue notes =
-    parseBody' (newNote value) continue' parseNote
+    parseBody (newNote value) level (tail nextTags) result continue' parseNote
     where
     continue' o = continue $ modify notes (++ [o]) obj
-    parseBody' newObj = parseBody newObj level (tail nextTags) result
 
 
 parseEvent obj (level, tag, value) nextTags result continue
