@@ -110,8 +110,9 @@ data SourceCitation = SourceCitation {
     _dat :: Maybe Data
 } deriving (Show, Eq)
 
-newSourceCitation1 xref = SourceCitation (Just xref) "" Nothing Nothing [] [] Nothing [] Nothing
-newSourceCitation2 description = SourceCitation Nothing description Nothing Nothing [] [] Nothing [] Nothing
+newSourceCitation value
+    | head value == '@' = SourceCitation (Just value) "" Nothing Nothing [] [] Nothing [] Nothing
+    | otherwise = SourceCitation Nothing value Nothing Nothing [] [] Nothing [] Nothing
 
 
 data Data = Data {

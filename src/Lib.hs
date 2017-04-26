@@ -226,7 +226,7 @@ parseText obj (level, tag, value) nextTags result continue
 
 parseNote obj (level, tag, value) nextTags result continue
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue submitterText
-    | tag == "SOUR" = parseSOUR obj level value nextTags result continue hasXref hasText noteSourceCitations
+    | tag == "SOUR" = parseSOUR obj level value nextTags result continue noteSourceCitations
     | otherwise = continue obj
     where
     hasXref = head value == '@'
@@ -243,7 +243,7 @@ parseCommon obj tag value continue text
 
 parseCommon2 :: (Eq t3, Num t3) => t4 -> (t3, String, String) -> [(t3, String, String)] -> (t1, t2) -> (t4 -> t) -> t4 :-> [SourceCitation] -> t4 :-> [Note] -> t
 parseCommon2 obj (level, tag, value) nextTags result continue sourceCitations notes
-    | tag == "SOUR" = parseSOUR obj level value nextTags result continue hasXref hasText sourceCitations
+    | tag == "SOUR" = parseSOUR obj level value nextTags result continue sourceCitations
     | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText notes
     | otherwise = continue obj
     where
@@ -251,13 +251,9 @@ parseCommon2 obj (level, tag, value) nextTags result continue sourceCitations no
     hasText = head value /= '@'
 
 
-parseSOUR :: (Eq t3, Num t3) => t4 -> t3 -> String -> [(t3, String, String)] -> (t1, t2) -> (t4 -> t) -> Bool -> Bool -> t4 :-> [SourceCitation] -> t
-parseSOUR obj level value nextTags result continue hasXref hasText sourceCitations7 =
+parseSOUR obj level value nextTags result continue sourceCitations7 =
     parseBody' (newSourceCitation value) continue' parseSourceCitation
     where
-    newSourceCitation
-        | hasXref = newSourceCitation1
-        | hasText = newSourceCitation2
     continue' o = continue $ modify sourceCitations7 (++ [o]) obj
     parseBody' newObj = parseBody newObj level (tail nextTags) result
 

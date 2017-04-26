@@ -137,7 +137,7 @@ main = hspec $ do
                                 (3, "EVEN", "Event type cited in source"),
                                 (2, "NOTE", "T")
                             ]
-                parseBody (newSourceCitation1 "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
+                parseBody (newSourceCitation "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
                     `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] [] Nothing [] Nothing
 
         context "on second case" $
@@ -158,8 +158,8 @@ main = hspec $ do
                                                 \2 QUAY 0\n\
                                          \1 OBJE"
 
-                parseBody (newSourceCitation2 "This source i") 1 nextTags ([], []) id parseSourceCitation
-                    `shouldBe` (newSourceCitation2 "This source is embedded\nin the record") {
+                parseBody (newSourceCitation "This source i") 1 nextTags ([], []) id parseSourceCitation
+                    `shouldBe` (newSourceCitation "This source is embedded\nin the record") {
 
                                    _srcNotes = [ newNote1 "@N17@" ],
                                    _srcTexts = [ "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source." ],
@@ -225,7 +225,7 @@ main = hspec $ do
 
                                 _nameSourceCitations = [
 
-                                    (newSourceCitation1 "@SOURCE1@") {
+                                    (newSourceCitation "@SOURCE1@") {
 
                                         _page = Just 55,
                                         _srcNotes = [ newNote1 "@N7@" ],
