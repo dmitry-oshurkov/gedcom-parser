@@ -87,9 +87,6 @@ parseAssociation obj (level, tag, value) nextTags result continue
     | tag == "RELA" = continue $ set relationIsDescriptor (Just value) obj
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags result continue assocSourceCitations assocNotes
     | otherwise = continue obj
-    where
-    hasXref = head value == '@'
-    hasText = head value /= '@'
 
 
 parseChildToFamilyLink obj (level, tag, value) nextTags result continue
