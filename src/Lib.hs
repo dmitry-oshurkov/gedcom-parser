@@ -75,13 +75,17 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     newMultimediaLink
         | not (null value) && hasXref = newMultimediaLink1 value
         | null value = newMultimediaLink2
-    continue' o = continue $ modify names (++ [o]) obj
-    continue'' o = continue $ modify personMultimediaLinks (++ [o]) obj
+
+    modifyList field o = continue $ modify field (++ [o]) obj
+
+    continue' = modifyList names
+    continue'' = modifyList personMultimediaLinks
     continue''' o = continue $ set personChangeDate (Just o) obj
-    continue'''' o = continue $ modify personUserReferenceNumbers (++ [o]) obj
-    continue''''' o = continue $ modify spouseToFamilyLinks (++ [o]) obj
-    continue'''''' o = continue $ modify childToFamilyLinks (++ [o]) obj
-    continue''''''' o = continue $ modify associations (++ [o]) obj
+    continue'''' = modifyList personUserReferenceNumbers
+    continue''''' = modifyList spouseToFamilyLinks
+    continue'''''' = modifyList childToFamilyLinks
+    continue''''''' = modifyList associations
+
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
