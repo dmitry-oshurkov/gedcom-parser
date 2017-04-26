@@ -131,8 +131,11 @@ data MultimediaLink = MultimediaLink {
     _notes :: [Note]
 } deriving (Show, Eq)
 
-newMultimediaLink1 xref = MultimediaLink (Just xref) Nothing Nothing Nothing Nothing []
-newMultimediaLink2 = MultimediaLink Nothing Nothing Nothing Nothing Nothing []
+newMultimediaLink value
+    | not (null value) && hasXref = MultimediaLink (Just value) Nothing Nothing Nothing Nothing []
+    | null value = MultimediaLink Nothing Nothing Nothing Nothing Nothing []
+    where
+    hasXref = head value == '@'
 
 
 data Event = Event {

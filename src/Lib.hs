@@ -64,7 +64,7 @@ parsePerson obj (level, tag, value) nextTags result continue
     | tag == "ALIA" = modifyList aliases value
     | tag == "ANCI" = modifyList ancestorsInterests value
     | tag == "DESI" = modifyList descendantsInterests value
-    | tag == "OBJE" = bodyOf' personMultimediaLinks modifyList newMultimediaLink parseMultimediaLink
+    | tag == "OBJE" = modifyList' personMultimediaLinks newMultimediaLink parseMultimediaLink
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags result continue personSourceCitations personNotes
     | tag == "RFN" = setField recordFileNumber value
     | tag == "AFN" = setField ancestralFileNumber value
@@ -73,10 +73,6 @@ parsePerson obj (level, tag, value) nextTags result continue
     | tag == "CHAN" = bodyOf' personChangeDate setField newChangeDate parseChangeDate
     | otherwise = continue obj
     where
-    hasXref = head value == '@'
-    newMultimediaLink
-        | not (null value) && hasXref = newMultimediaLink1 value
-        | null value = newMultimediaLink2
     modifyList field o = continue $ modify field (++ [o]) obj
     setField field val = continue $ set field (Just val) obj
     bodyOf' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
@@ -147,15 +143,12 @@ parseSourceCitation obj (level, tag, value) nextTags result continue
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
     | tag == "TEXT" = bodyOf' srcTexts modifyList value parseText
     | tag == "QUAY" = setField dataQuality (parseCertaintyAssessment value)
-    | tag == "OBJE" = bodyOf' srcMultimediaLinks modifyList newMultimediaLink parseMultimediaLink
+    | tag == "OBJE" = modifyList' srcMultimediaLinks newMultimediaLink parseMultimediaLink
     | tag == "DATA" = bodyOf' dat setField newData parseData
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
-    newMultimediaLink
-        | not (null value) && hasXref = newMultimediaLink1 value
-        | null value = newMultimediaLink2
     modifyList field o = continue $ modify field (++ [o]) obj
     setField field val = continue $ set field (Just val) obj
     bodyOf' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)

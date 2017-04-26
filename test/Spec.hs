@@ -229,7 +229,7 @@ main = hspec $ do
 
                                         _page = Just 55,
                                         _srcNotes = [ newNote1 "@N7@" ],
-                                        _srcMultimediaLinks = [ newMultimediaLink2 {
+                                        _srcMultimediaLinks = [ (newMultimediaLink "") {
                                                                     _notes = [ newNote1 "@N26@" ]
                                                                 }
                                         ]
@@ -381,8 +381,8 @@ main = hspec $ do
                                          \4 FILE ImgFile.JPG\n\
                                      \3 NOTE @N7@"
 
-            parseBody newMultimediaLink2 3 nextTags ([], []) id parseMultimediaLink
-                `shouldBe` newMultimediaLink2 {
+            parseBody (newMultimediaLink "") 3 nextTags ([], []) id parseMultimediaLink
+                `shouldBe` (newMultimediaLink "") {
                                 _format = Just Jpeg,
                                 _descriptiveTitle = Just "Multimedia link about this source",
                                 _multimediaFileReference = Just "ImgFile.JPG",
