@@ -57,11 +57,11 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
 --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
     | tag == "FAMC" = bodyOf' (newChildToFamilyLink value) continue'''''' parseChildToFamilyLink
     | tag == "FAMS" = bodyOf' (newSpouseToFamilyLink value) continue''''' parseSpouseToFamilyLink
-    | tag == "SUBM" = continue $ modify submitters (++ [value]) obj
+    | tag == "SUBM" = modifyList submitters value
     | tag == "ASSO" = bodyOf' (newAssociation value) continue''''''' parseAssociation
-    | tag == "ALIA" = continue $ modify aliases (++ [value]) obj
-    | tag == "ANCI" = continue $ modify ancestorsInterests (++ [value]) obj
-    | tag == "DESI" = continue $ modify descendantsInterests (++ [value]) obj
+    | tag == "ALIA" = modifyList aliases value
+    | tag == "ANCI" = modifyList ancestorsInterests value
+    | tag == "DESI" = modifyList descendantsInterests value
     | tag == "OBJE" = bodyOf' newMultimediaLink continue'' parseMultimediaLink
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue personSourceCitations personNotes
     | tag == "RFN" = continue $ set recordFileNumber (Just value) obj
