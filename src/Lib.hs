@@ -64,10 +64,10 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "DESI" = modifyList descendantsInterests value
     | tag == "OBJE" = bodyOf' newMultimediaLink continue'' parseMultimediaLink
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue personSourceCitations personNotes
-    | tag == "RFN" = continue $ set recordFileNumber (Just value) obj
-    | tag == "AFN" = continue $ set ancestralFileNumber (Just value) obj
+    | tag == "RFN" = setField recordFileNumber value
+    | tag == "AFN" = setField ancestralFileNumber value
     | tag == "REFN" = bodyOf' (newUserReferenceNumber value) continue'''' parseUserReferenceNumber
-    | tag == "RIN" = continue $ set recIdNumber (Just (read value :: Int)) obj
+    | tag == "RIN" = setField recIdNumber (read value :: Int)
     | tag == "CHAN" = bodyOf' newChangeDate continue''' parseChangeDate
     | otherwise = continue obj
     where
@@ -76,17 +76,17 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
         | not (null value) && hasXref = newMultimediaLink1 value
         | null value = newMultimediaLink2
 
+    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
     modifyList field o = continue $ modify field (++ [o]) obj
+    setField field val = continue $ set field (Just val) obj
 
     continue' = modifyList names
     continue'' = modifyList personMultimediaLinks
-    continue''' o = continue $ set personChangeDate (Just o) obj
+    continue''' = setField personChangeDate
     continue'''' = modifyList personUserReferenceNumbers
     continue''''' = modifyList spouseToFamilyLinks
     continue'''''' = modifyList childToFamilyLinks
     continue''''''' = modifyList associations
-
-    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
 
 
 parseAssociation obj (level, tag, value) nextTags (people, families) continue
