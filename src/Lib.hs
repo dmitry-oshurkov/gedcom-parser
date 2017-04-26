@@ -32,6 +32,7 @@ parseBody obj startLevel nextTags result continue parse
 
 modifyList continue obj field val = continue $ modify field (++ [val]) obj
 setField continue obj field val = continue $ set field val obj
+setField' continue obj field val = setField continue obj field (Just val)
 
 
 parseGEDCOM (level, xref, tag) nextTags result
@@ -54,9 +55,9 @@ parseTopLevel (level, xref, tag) nextTags result continue
 
 
 parsePerson obj (level, tag, value) nextTags result continue
-    | tag == "RESN" = setField' resn (parseResn value)
+    | tag == "RESN" = setField'' resn (parseResn value)
     | tag == "NAME" = modifyList'' names newName parseName
-    | tag == "SEX" = setField' gender (parseGender value)
+    | tag == "SEX" = setField'' gender (parseGender value)
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
 --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
 --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
@@ -69,16 +70,16 @@ parsePerson obj (level, tag, value) nextTags result continue
     | tag == "DESI" = modifyList' descendantsInterests value
     | tag == "OBJE" = modifyList'' personMultimediaLinks newMultimediaLink parseMultimediaLink
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags result continue personSourceCitations personNotes
-    | tag == "RFN" = setField'' recordFileNumber value
-    | tag == "AFN" = setField'' ancestralFileNumber value
+    | tag == "RFN" = setField''' recordFileNumber value
+    | tag == "AFN" = setField''' ancestralFileNumber value
     | tag == "REFN" = modifyList'' personUserReferenceNumbers newUserReferenceNumber parseUserReferenceNumber
-    | tag == "RIN" = setField'' recIdNumber (read value :: Int)
-    | tag == "CHAN" = parseBody' personChangeDate setField'' newChangeDate parseChangeDate
+    | tag == "RIN" = setField''' recIdNumber (read value :: Int)
+    | tag == "CHAN" = parseBody' personChangeDate setField''' newChangeDate parseChangeDate
     | otherwise = continue obj
     where
     parseBody' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
-    setField' = setField continue obj
-    setField'' field val = setField' field (Just val)
+    setField'' = setField continue obj
+    setField''' = setField' continue obj
     modifyList' = modifyList continue obj
     modifyList'' field newObjFun = parseBody' field modifyList' (newObjFun value)
 
@@ -141,21 +142,20 @@ parseName obj (level, tag, value) nextTags result continue
 
 
 parseSourceCitation obj (level, tag, value) nextTags result continue
-    | tag == "PAGE" = setField'' page (read value :: Int)
-    | tag == "EVEN" = parseBody' event setField'' (newEvent (parseEventType value) value) parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
+    | tag == "PAGE" = setField''' page (read value :: Int)
+    | tag == "EVEN" = parseBody' event setField''' (newEvent (parseEventType value) value) parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
     | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText srcNotes
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
     | tag == "TEXT" = parseBody' srcTexts modifyList' value parseText
-    | tag == "QUAY" = setField'' dataQuality (parseCertaintyAssessment value)
+    | tag == "QUAY" = setField''' dataQuality (parseCertaintyAssessment value)
     | tag == "OBJE" = modifyList'' srcMultimediaLinks newMultimediaLink parseMultimediaLink
-    | tag == "DATA" = parseBody' dat setField'' newData parseData
+    | tag == "DATA" = parseBody' dat setField''' newData parseData
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
     parseBody' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
-    setField' = setField continue obj
-    setField'' field val = setField' field (Just val)
+    setField''' = setField' continue obj
     modifyList' = modifyList continue obj
     modifyList'' field newObjFun = parseBody' field modifyList' (newObjFun value)
 
