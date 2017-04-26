@@ -50,15 +50,15 @@ parseTopLevel (level, xref, tag) nextTags (people, families) continue
 
 parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "RESN" = continue $ set resn (parseResn value) obj
-    | tag == "NAME" = bodyOf' (newName value) continue' parseName
+    | tag == "NAME" = bodyOf'' newName continue' parseName
     | tag == "SEX" = continue $ set gender (parseGender value) obj
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
 --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
 --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
-    | tag == "FAMC" = bodyOf' (newChildToFamilyLink value) continue'''''' parseChildToFamilyLink
-    | tag == "FAMS" = bodyOf' (newSpouseToFamilyLink value) continue''''' parseSpouseToFamilyLink
+    | tag == "FAMC" = bodyOf'' newChildToFamilyLink continue'''''' parseChildToFamilyLink
+    | tag == "FAMS" = bodyOf'' newSpouseToFamilyLink continue''''' parseSpouseToFamilyLink
     | tag == "SUBM" = modifyList submitters value
-    | tag == "ASSO" = bodyOf' (newAssociation value) continue''''''' parseAssociation
+    | tag == "ASSO" = bodyOf'' newAssociation continue''''''' parseAssociation
     | tag == "ALIA" = modifyList aliases value
     | tag == "ANCI" = modifyList ancestorsInterests value
     | tag == "DESI" = modifyList descendantsInterests value
@@ -66,7 +66,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue personSourceCitations personNotes
     | tag == "RFN" = setField recordFileNumber value
     | tag == "AFN" = setField ancestralFileNumber value
-    | tag == "REFN" = bodyOf' (newUserReferenceNumber value) continue'''' parseUserReferenceNumber
+    | tag == "REFN" = bodyOf'' newUserReferenceNumber continue'''' parseUserReferenceNumber
     | tag == "RIN" = setField recIdNumber (read value :: Int)
     | tag == "CHAN" = bodyOf' newChangeDate continue''' parseChangeDate
     | otherwise = continue obj
@@ -77,6 +77,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
         | null value = newMultimediaLink2
 
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+    bodyOf'' newObjFun = bodyOf' (newObjFun value)
     modifyList field o = continue $ modify field (++ [o]) obj
     setField field val = continue $ set field (Just val) obj
 
