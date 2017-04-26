@@ -20,36 +20,37 @@ parseTag src =
     value = match!!3
 
 
-parseBody obj startLevel nextTags (people, families) continue parse
+parseBody obj startLevel nextTags result continue parse
     | null nextTags = continue obj
     | level == startLevel = continue obj
-    | level == (startLevel + 1) = parse obj (level, tag, value) nextTags (people, families) self
+    | level == (startLevel + 1) = parse obj (level, tag, value) nextTags result self
     | otherwise = self obj
     where
-    self o = parseBody o startLevel (tail nextTags) (people, families) continue parse
+    self o = parseBody o startLevel (tail nextTags) result continue parse
     (level, tag, value) = head nextTags
 
 
 
-parseGEDCOM (level, xref, tag) nextTags (people, families)
-    | null nextTags = (people, families)
-    | level == 0 && head xref == '@' = parseTopLevel (level, xref, tag) nextTags (people, families) self
-    | otherwise = self (people, families)
+parseGEDCOM (level, xref, tag) nextTags result
+    | null nextTags = result
+    | level == 0 && head xref == '@' = parseTopLevel (level, xref, tag) nextTags result self
+    | otherwise = self result
     where
     self = parseGEDCOM (head nextTags) (tail nextTags)
 
 
-parseTopLevel (level, xref, tag) nextTags (people, families) continue
+parseTopLevel (level, xref, tag) nextTags result continue
     | tag == "INDI" = bodyOf'' (newPerson xref) continue' parsePerson
     | tag == "FAM" = bodyOf'' (newFamily tag) continue'' parseFamily
-    | otherwise = continue (people, families)
+    | otherwise = continue result
     where
+    (people, families) = result
     continue' o = continue (people ++ [o], families)
     continue'' o = continue (people, families ++ [o])
-    bodyOf'' newObj = parseBody newObj level nextTags (people, families)
+    bodyOf'' newObj = parseBody newObj level nextTags result
 
 
-parsePerson obj (level, tag, value) nextTags (people, families) continue
+parsePerson obj (level, tag, value) nextTags result continue
     | tag == "RESN" = continue $ set resn (parseResn value) obj
     | tag == "NAME" = modifyList' names newName parseName
     | tag == "SEX" = continue $ set gender (parseGender value) obj
@@ -64,7 +65,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "ANCI" = modifyList ancestorsInterests value
     | tag == "DESI" = modifyList descendantsInterests value
     | tag == "OBJE" = bodyOf' personMultimediaLinks modifyList newMultimediaLink parseMultimediaLink
-    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue personSourceCitations personNotes
+    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags result continue personSourceCitations personNotes
     | tag == "RFN" = setField recordFileNumber value
     | tag == "AFN" = setField ancestralFileNumber value
     | tag == "REFN" = modifyList' personUserReferenceNumbers newUserReferenceNumber parseUserReferenceNumber
@@ -78,74 +79,74 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
         | null value = newMultimediaLink2
     modifyList field o = continue $ modify field (++ [o]) obj
     setField field val = continue $ set field (Just val) obj
-    bodyOf' field setFieldFun newObj = parseBody newObj level (tail nextTags) (people, families) (setFieldFun field)
+    bodyOf' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
     modifyList' field newObjFun = bodyOf' field modifyList (newObjFun value)
 
 
-parseAssociation obj (level, tag, value) nextTags (people, families) continue
+parseAssociation obj (level, tag, value) nextTags result continue
     | tag == "RELA" = continue $ set relationIsDescriptor (Just value) obj
-    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue assocSourceCitations assocNotes
+    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags result continue assocSourceCitations assocNotes
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
 
 
-parseChildToFamilyLink obj (level, tag, value) nextTags (people, families) continue
+parseChildToFamilyLink obj (level, tag, value) nextTags result continue
     | tag == "PEDI" = continue $ set ctflPedigreeLinkageType (Just $ parsePedigreeLinkageType value) obj
-    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText ctflNotes
+    | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText ctflNotes
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
 
 
-parseSpouseToFamilyLink obj (level, tag, value) nextTags (people, families) continue
-    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText stflNotes
+parseSpouseToFamilyLink obj (level, tag, value) nextTags result continue
+    | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText stflNotes
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
 
 
-parseUserReferenceNumber obj (level, tag, value) nextTags (people, families) continue
+parseUserReferenceNumber obj (level, tag, value) nextTags result continue
     | tag == "TYPE" = continue $ set refnType (Just value) obj
     | otherwise = continue obj
 
 
-parseChangeDate obj (level, tag, value) nextTags (people, families) continue
+parseChangeDate obj (level, tag, value) nextTags result continue
     | tag == "DATE" = bodyOf' ("%e %b %Y", value) continue' parseExactDateTime
-    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText changeNotes
+    | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText changeNotes
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
     continue' (fmt, val) = continue $ set changeDate (parseTimeM True defaultTimeLocale fmt val) obj
-    bodyOf' newObj = parseBody newObj level (tail nextTags) (people, families)
+    bodyOf' newObj = parseBody newObj level (tail nextTags) result
 
 
-parseExactDateTime (fmt, val) (level, tag, value) nextTags (people, families) continue
+parseExactDateTime (fmt, val) (level, tag, value) nextTags result continue
     | tag == "TIME" = continue (fmt ++ " %k:%M:%S", val ++ " " ++ value)
     | otherwise = continue (fmt, val)
 
 
-parseName obj (level, tag, value) nextTags (people, families) continue
+parseName obj (level, tag, value) nextTags result continue
     | tag == "NPFX" = set' npfx
     | tag == "GIVN" = set' givn
     | tag == "NICK" = set' nick
     | tag == "SPFX" = set' spfx
     | tag == "SURN" = set' surn
     | tag == "NSFX" = set' nsfx
-    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue nameSourceCitations nameNotes
+    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags result continue nameSourceCitations nameNotes
     | otherwise = continue obj
     where
     set' fld = continue $ set fld (Just value) obj
 
 
-parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
+parseSourceCitation obj (level, tag, value) nextTags result continue
     | tag == "PAGE" = setField page (read value :: Int)
     | tag == "EVEN" = bodyOf' event setField (newEvent (parseEventType value) value) parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
-    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText srcNotes
+    | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText srcNotes
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
     | tag == "TEXT" = bodyOf' srcTexts modifyList value parseText
     | tag == "QUAY" = setField dataQuality (parseCertaintyAssessment value)
@@ -160,17 +161,17 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
         | null value = newMultimediaLink2
     modifyList field o = continue $ modify field (++ [o]) obj
     setField field val = continue $ set field (Just val) obj
-    bodyOf' field setFieldFun newObj = parseBody newObj level (tail nextTags) (people, families) (setFieldFun field)
+    bodyOf' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
     modifyList' field newObjFun = bodyOf' field modifyList (newObjFun value)
 
 
-parseData obj (level, tag, value) nextTags (people, families) continue
+parseData obj (level, tag, value) nextTags result continue
     | tag == "DATE" = continue $ set dataDate (Just $ parseDate value) obj
     | tag == "TEXT" = bodyOf' value continue' parseText
     | otherwise = continue obj
     where
     continue' o = continue $ modify dataTexts (++ [o]) obj
-    bodyOf' newObj = parseBody newObj level (tail nextTags) (people, families)
+    bodyOf' newObj = parseBody newObj level (tail nextTags) result
 
 
 parseDate val
@@ -209,28 +210,28 @@ parseDate val
 parseDateValue val = val
 
 
-parseMultimediaLink obj (level, tag, value) nextTags (people, families) continue
+parseMultimediaLink obj (level, tag, value) nextTags result continue
     | tag == "FORM" = continue $ case parseMultimediaFormat value of { Custom -> set customFormat (Just value) (set format (Just Custom) obj); _ -> set format (Just $ parseMultimediaFormat value) obj }
     | tag == "TITL" = continue $ set descriptiveTitle (Just value) obj
     | tag == "FILE" = continue $ set multimediaFileReference (Just value) obj
-    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText notes
+    | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText notes
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
     continue' o = continue $ modify notes (++ [o]) obj
-    bodyOf' newObj = parseBody newObj level (tail nextTags) (people, families)
+    bodyOf' newObj = parseBody newObj level (tail nextTags) result
 
 
-parseText obj (level, tag, value) nextTags (people, families) continue
+parseText obj (level, tag, value) nextTags result continue
     | tag == "CONC" = continue $ obj ++ value
     | tag == "CONT" = continue $ obj ++ "\n" ++ value
     | otherwise = continue obj
 
 
-parseNote obj (level, tag, value) nextTags (people, families) continue
+parseNote obj (level, tag, value) nextTags result continue
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue submitterText
-    | tag == "SOUR" = parseSOUR obj level value nextTags (people, families) continue hasXref hasText noteSourceCitations
+    | tag == "SOUR" = parseSOUR obj level value nextTags result continue hasXref hasText noteSourceCitations
     | otherwise = continue obj
     where
     hasXref = head value == '@'
@@ -246,9 +247,9 @@ parseCommon obj tag value continue text
 
 
 parseCommon2 :: (Eq t3, Num t3) => t4 -> (t3, String, String) -> [(t3, String, String)] -> (t1, t2) -> (t4 -> t) -> t4 :-> [SourceCitation] -> t4 :-> [Note] -> t
-parseCommon2 obj (level, tag, value) nextTags (people, families) continue sourceCitations notes
-    | tag == "SOUR" = parseSOUR obj level value nextTags (people, families) continue hasXref hasText sourceCitations
-    | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText notes
+parseCommon2 obj (level, tag, value) nextTags result continue sourceCitations notes
+    | tag == "SOUR" = parseSOUR obj level value nextTags result continue hasXref hasText sourceCitations
+    | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText notes
     | otherwise = continue obj
     where
     hasXref = head value == '@'
@@ -256,28 +257,28 @@ parseCommon2 obj (level, tag, value) nextTags (people, families) continue source
 
 
 parseSOUR :: (Eq t3, Num t3) => t4 -> t3 -> String -> [(t3, String, String)] -> (t1, t2) -> (t4 -> t) -> Bool -> Bool -> t4 :-> [SourceCitation] -> t
-parseSOUR obj level value nextTags (people, families) continue hasXref hasText sourceCitations7 =
+parseSOUR obj level value nextTags result continue hasXref hasText sourceCitations7 =
     bodyOf' (newSourceCitation value) continue' parseSourceCitation
     where
     newSourceCitation
         | hasXref = newSourceCitation1
         | hasText = newSourceCitation2
     continue' o = continue $ modify sourceCitations7 (++ [o]) obj
-    bodyOf' newObj = parseBody newObj level (tail nextTags) (people, families)
+    bodyOf' newObj = parseBody newObj level (tail nextTags) result
 
 
 parseNOTE :: (Eq t4, Num t4) => t5 -> t4 -> String -> [(t4, String, String)] -> (t1, t2) -> (t5 -> t) -> Bool -> Bool -> t5 :-> [Note] -> t
-parseNOTE obj level value nextTags (people, families) continue hasXref hasText notes =
+parseNOTE obj level value nextTags result continue hasXref hasText notes =
     bodyOf' (newNote value) continue' parseNote
     where
     newNote
         | hasXref = newNote1
         | hasText = newNote2
     continue' o = continue $ modify notes (++ [o]) obj
-    bodyOf' newObj = parseBody newObj level (tail nextTags) (people, families)
+    bodyOf' newObj = parseBody newObj level (tail nextTags) result
 
 
-parseEvent obj (level, tag, value) nextTags (people, families) continue
+parseEvent obj (level, tag, value) nextTags result continue
     | tag == "ROLE" = continue obj
     | otherwise = continue obj
 
@@ -380,5 +381,5 @@ parsePedigreeLinkageType val
     | otherwise = error $ "Unexpected PEDIGREE_LINKAGE_TYPE {" ++ val ++ "}"
 
 
-parseFamily obj (level, tag, value) nextTags (people, families) continue =
+parseFamily obj (level, tag, value) nextTags result continue =
     continue obj
