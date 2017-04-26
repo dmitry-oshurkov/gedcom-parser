@@ -142,14 +142,14 @@ parseName obj (level, tag, value) nextTags (people, families) continue
 
 
 parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
-    | tag == "PAGE" = continue $ set page (Just (read value :: Int)) obj
-    | tag == "EVEN" = bodyOf' (newEvent (parseEventType value) value) continue' parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
+    | tag == "PAGE" = setField page (read value :: Int)
+    | tag == "EVEN" = bodyOf' event setField (newEvent (parseEventType value) value) parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
     | tag == "NOTE" = parseNOTE obj level value nextTags (people, families) continue hasXref hasText srcNotes
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
-    | tag == "TEXT" = bodyOf' value continue'' parseText
-    | tag == "QUAY" = continue $ set dataQuality (Just $ parseCertaintyAssessment value) obj
-    | tag == "OBJE" = bodyOf' newMultimediaLink continue''' parseMultimediaLink
-    | tag == "DATA" = bodyOf' newData continue'''' parseData
+    | tag == "TEXT" = bodyOf' srcTexts modifyList value parseText
+    | tag == "QUAY" = setField dataQuality (parseCertaintyAssessment value)
+    | tag == "OBJE" = bodyOf' srcMultimediaLinks modifyList newMultimediaLink parseMultimediaLink
+    | tag == "DATA" = bodyOf' dat setField newData parseData
     | otherwise = continue obj
     where
     hasXref = head value == '@'
@@ -157,11 +157,10 @@ parseSourceCitation obj (level, tag, value) nextTags (people, families) continue
     newMultimediaLink
         | not (null value) && hasXref = newMultimediaLink1 value
         | null value = newMultimediaLink2
-    continue' o = continue $ set event (Just o) obj
-    continue'' o = continue $ modify srcTexts (++ [o]) obj
-    continue''' o = continue $ modify srcMultimediaLinks (++ [o]) obj
-    continue'''' o = continue $ set dat (Just o) obj
-    bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+    modifyList field o = continue $ modify field (++ [o]) obj
+    setField field val = continue $ set field (Just val) obj
+    bodyOf' field setFieldFun newObj = bodyOf newObj level (tail nextTags) (people, families) (setFieldFun field)
+    modifyList' field newObjFun = bodyOf' field modifyList (newObjFun value)
 
 
 parseData obj (level, tag, value) nextTags (people, families) continue
