@@ -55,33 +55,33 @@ parseTopLevel (level, xref, tag) nextTags result continue
 
 
 parsePerson obj (level, tag, value) nextTags result continue
-    | tag == "RESN" = setField'' resn (parseResn value)
-    | tag == "NAME" = modifyList'' names newName parseName
-    | tag == "SEX" = setField'' gender (parseGender value)
+    | tag == "RESN" = set' resn (parseResn value)
+    | tag == "NAME" = modify'' names newName parseName
+    | tag == "SEX" = set' gender (parseGender value)
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
 --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
 --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
-    | tag == "FAMC" = modifyList'' childToFamilyLinks newChildToFamilyLink parseChildToFamilyLink
-    | tag == "FAMS" = modifyList'' spouseToFamilyLinks newSpouseToFamilyLink parseSpouseToFamilyLink
-    | tag == "SUBM" = modifyList' submitters value
-    | tag == "ASSO" = modifyList'' associations newAssociation parseAssociation
-    | tag == "ALIA" = modifyList' aliases value
-    | tag == "ANCI" = modifyList' ancestorsInterests value
-    | tag == "DESI" = modifyList' descendantsInterests value
-    | tag == "OBJE" = modifyList'' personMultimediaLinks newMultimediaLink parseMultimediaLink
+    | tag == "FAMC" = modify'' childToFamilyLinks newChildToFamilyLink parseChildToFamilyLink
+    | tag == "FAMS" = modify'' spouseToFamilyLinks newSpouseToFamilyLink parseSpouseToFamilyLink
+    | tag == "SUBM" = modify' submitters value
+    | tag == "ASSO" = modify'' associations newAssociation parseAssociation
+    | tag == "ALIA" = modify' aliases value
+    | tag == "ANCI" = modify' ancestorsInterests value
+    | tag == "DESI" = modify' descendantsInterests value
+    | tag == "OBJE" = modify'' personMultimediaLinks newMultimediaLink parseMultimediaLink
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags result continue personSourceCitations personNotes
-    | tag == "RFN" = setField''' recordFileNumber value
-    | tag == "AFN" = setField''' ancestralFileNumber value
-    | tag == "REFN" = modifyList'' personUserReferenceNumbers newUserReferenceNumber parseUserReferenceNumber
-    | tag == "RIN" = setField''' recIdNumber (read value :: Int)
-    | tag == "CHAN" = parseBody' personChangeDate setField''' newChangeDate parseChangeDate
+    | tag == "RFN" = set'' recordFileNumber value
+    | tag == "AFN" = set'' ancestralFileNumber value
+    | tag == "REFN" = modify'' personUserReferenceNumbers newUserReferenceNumber parseUserReferenceNumber
+    | tag == "RIN" = set'' recIdNumber (read value :: Int)
+    | tag == "CHAN" = parseBody' personChangeDate set'' newChangeDate parseChangeDate
     | otherwise = continue obj
     where
     parseBody' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
-    setField'' = setField continue obj
-    setField''' = setField' continue obj
-    modifyList' = modifyList continue obj
-    modifyList'' field newObjFun = parseBody' field modifyList' (newObjFun value)
+    set' = setField continue obj
+    set'' = setField' continue obj
+    modify' = modifyList continue obj
+    modify'' field newObjFun = parseBody' field modify' (newObjFun value)
 
 
 parseAssociation obj (level, tag, value) nextTags result continue
@@ -134,20 +134,20 @@ parseName obj (level, tag, value) nextTags result continue
 
 
 parseSourceCitation obj (level, tag, value) nextTags result continue
-    | tag == "PAGE" = setField''' page (read value :: Int)
-    | tag == "EVEN" = parseBody' event setField''' (newEvent (parseEventType value) value) parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
+    | tag == "PAGE" = set' page (read value :: Int)
+    | tag == "EVEN" = parseBody' event set' (newEvent (parseEventType value) value) parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
     | tag == "NOTE" = parseNOTE obj level value nextTags result continue srcNotes
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
-    | tag == "TEXT" = parseBody' srcTexts modifyList' value parseText
-    | tag == "QUAY" = setField''' dataQuality (parseCertaintyAssessment value)
-    | tag == "OBJE" = modifyList'' srcMultimediaLinks newMultimediaLink parseMultimediaLink
-    | tag == "DATA" = parseBody' dat setField''' newData parseData
+    | tag == "TEXT" = parseBody' srcTexts modify' value parseText
+    | tag == "QUAY" = set' dataQuality (parseCertaintyAssessment value)
+    | tag == "OBJE" = modify'' srcMultimediaLinks newMultimediaLink parseMultimediaLink
+    | tag == "DATA" = parseBody' dat set' newData parseData
     | otherwise = continue obj
     where
     parseBody' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
-    setField''' = setField' continue obj
-    modifyList' = modifyList continue obj
-    modifyList'' field newObjFun = parseBody' field modifyList' (newObjFun value)
+    set' = setField' continue obj
+    modify' = modifyList continue obj
+    modify'' field newObjFun = parseBody' field modify' (newObjFun value)
 
 
 parseData obj (level, tag, value) nextTags result continue
