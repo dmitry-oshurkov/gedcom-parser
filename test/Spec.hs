@@ -71,7 +71,7 @@ main = hspec $ do
                                                 \2 TYPE User Reference Type\n\
                                        \0 @I15@ INDI"
 
-            bodyOf (newPerson "@PERSON2@") 0 nextTags ([], []) id parsePerson
+            parseBody (newPerson "@PERSON2@") 0 nextTags ([], []) id parsePerson
                 `shouldBe` (newPerson "@PERSON2@") {
                                 _personXref = "@PERSON2@",
                                 _resn = Privacy,
@@ -120,7 +120,7 @@ main = hspec $ do
                             (2, "NSFX", "Jr."),
                             (1, "SEX", "M")
                         ]
-            bodyOf (newName "Joseph Tag /Torture/") 1 nextTags ([], []) id parseName
+            parseBody (newName "Joseph Tag /Torture/") 1 nextTags ([], []) id parseName
                 `shouldBe` Name "Joseph Tag /Torture/" (Just "Prof.") (Just "Joseph") (Just "Joe") (Just "Le") (Just "Torture") (Just "Jr.") [] []
 
     describe "parseSourceCitation" $ do
@@ -137,7 +137,7 @@ main = hspec $ do
                                 (3, "EVEN", "Event type cited in source"),
                                 (2, "NOTE", "T")
                             ]
-                bodyOf (newSourceCitation1 "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
+                parseBody (newSourceCitation1 "@SOURCE1@") 2 nextTags ([], []) id parseSourceCitation
                     `shouldBe` SourceCitation (Just "@SOURCE1@") "" (Just 42) (Just (Event CustomEventType (Just "Event type cited in source") Nothing Nothing)) [] [] Nothing [] Nothing
 
         context "on second case" $
@@ -158,7 +158,7 @@ main = hspec $ do
                                                 \2 QUAY 0\n\
                                          \1 OBJE"
 
-                bodyOf (newSourceCitation2 "This source i") 1 nextTags ([], []) id parseSourceCitation
+                parseBody (newSourceCitation2 "This source i") 1 nextTags ([], []) id parseSourceCitation
                     `shouldBe` (newSourceCitation2 "This source is embedded\nin the record") {
 
                                    _srcNotes = [ newNote1 "@N17@" ],
@@ -181,7 +181,7 @@ main = hspec $ do
                 let nextTags = [
                                 (4, "FILE", "ImgFile.JPG")
                             ]
-                bodyOf (newNote1 "@N26@") 4 nextTags ([], []) id parseNote
+                parseBody (newNote1 "@N26@") 4 nextTags ([], []) id parseNote
                     `shouldBe` Note (Just "@N26@") "" []
 
         context "on second case" $
@@ -205,7 +205,7 @@ main = hspec $ do
                                 (3, "CONT", "NOTE: many applications are confused by two NAME structures."),
                                 (1, "SEX", "M")
                             ]
-                bodyOf (newNote2 "These are notes about the first NAME structure in this record. These notes are ") 2 nextTags ([], []) id parseNote
+                parseBody (newNote2 "These are notes about the first NAME structure in this record. These notes are ") 2 nextTags ([], []) id parseNote
                     `shouldBe` Note Nothing "These are notes about the first NAME structure in this record. These notes are embedded in the INDIVIDUAL record itself.\n\nThe second name structure in this record uses all possible tags for a personal name structure.\n\nNOTE: many applications are confused by two NAME structures." []
 
 
@@ -220,7 +220,7 @@ main = hspec $ do
                                         \2 NOTE This\n\
                                      \1 NAME Barry"
 
-            bodyOf (newName "Villy") 1 nextTags ([], []) id parseName
+            parseBody (newName "Villy") 1 nextTags ([], []) id parseName
                 `shouldBe` (newName "Villy") {
 
                                 _nameSourceCitations = [
@@ -381,7 +381,7 @@ main = hspec $ do
                                          \4 FILE ImgFile.JPG\n\
                                      \3 NOTE @N7@"
 
-            bodyOf newMultimediaLink2 3 nextTags ([], []) id parseMultimediaLink
+            parseBody newMultimediaLink2 3 nextTags ([], []) id parseMultimediaLink
                 `shouldBe` newMultimediaLink2 {
                                 _format = Just Jpeg,
                                 _descriptiveTitle = Just "Multimedia link about this source",
@@ -431,7 +431,7 @@ main = hspec $ do
                                         \2 DATE 18 Jul 2005\n\
                                       \1 RIN 12"
 
-            bodyOf newChangeDate 1 nextTags ([], []) id parseChangeDate
+            parseBody newChangeDate 1 nextTags ([], []) id parseChangeDate
                 `shouldBe` newChangeDate {
                                 _changeDate = Just (UTCTime (fromGregorian 2005 07 18) (secondsToDiffTime 0))
                            }
@@ -444,7 +444,7 @@ main = hspec $ do
                                             \2 RELA Has multimedia links\n\
                                         \1 ALIA @I9@"
 
-            bodyOf (newAssociation "@I9@") 1 nextTags ([], []) id parseAssociation
+            parseBody (newAssociation "@I9@") 1 nextTags ([], []) id parseAssociation
                 `shouldBe` (newAssociation "@I9@") {
                                 _relationIsDescriptor = Just "Has multimedia links"
                             }
