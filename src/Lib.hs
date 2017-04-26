@@ -58,7 +58,7 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     | tag == "FAMC" = bodyOf' (newChildToFamilyLink value) continue'''''' parseChildToFamilyLink
     | tag == "FAMS" = bodyOf' (newSpouseToFamilyLink value) continue''''' parseSpouseToFamilyLink
     | tag == "SUBM" = continue $ modify submitters (++ [value]) obj
---     +1 <<ASSOCIATION_STRUCTURE>>  {0:M}
+    | tag == "ASSO" = bodyOf' (newAssociation value) continue''''''' parseAssociation
     | tag == "ALIA" = continue $ modify aliases (++ [value]) obj
     | tag == "ANCI" = continue $ modify ancestorsInterests (++ [value]) obj
     | tag == "DESI" = continue $ modify descendantsInterests (++ [value]) obj
@@ -81,7 +81,17 @@ parsePerson obj (level, tag, value) nextTags (people, families) continue
     continue'''' o = continue $ modify personUserReferenceNumbers (++ [o]) obj
     continue''''' o = continue $ modify spouseToFamilyLinks (++ [o]) obj
     continue'''''' o = continue $ modify childToFamilyLinks (++ [o]) obj
+    continue''''''' o = continue $ modify associations (++ [o]) obj
     bodyOf' newObj = bodyOf newObj level (tail nextTags) (people, families)
+
+
+parseAssociation obj (level, tag, value) nextTags (people, families) continue
+    | tag == "RELA" = continue $ set relationIsDescriptor (Just value) obj
+    | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags (people, families) continue assocSourceCitations assocNotes
+    | otherwise = continue obj
+    where
+    hasXref = head value == '@'
+    hasText = head value /= '@'
 
 
 parseChildToFamilyLink obj (level, tag, value) nextTags (people, families) continue

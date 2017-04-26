@@ -16,7 +16,7 @@ data Person = Person {
     _childToFamilyLinks :: [ChildToFamilyLink],
     _spouseToFamilyLinks :: [SpouseToFamilyLink],
     _submitters :: [String],
-    --     +1 <<ASSOCIATION_STRUCTURE>>  {0:M}
+    _associations :: [Association],
     _aliases :: [String],
     _ancestorsInterests :: [String],
     _descendantsInterests :: [String],
@@ -33,7 +33,17 @@ data Person = Person {
     _personChangeDate :: Maybe ChangeDate
 } deriving (Show, Eq)
 
-newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] [] [] Nothing Nothing Nothing [] Nothing
+newPerson xref = Person xref Free [] UnknownGender [] [] [] [] [] [] [] [] [] [] Nothing Nothing Nothing [] Nothing
+
+
+data Association = Association {
+    _assocXref :: String,
+    _relationIsDescriptor :: Maybe String,
+    _assocNotes :: [Note],
+    _assocSourceCitations :: [SourceCitation]
+} deriving (Show, Eq)
+
+newAssociation xref = Association xref Nothing [] []
 
 
 data ChildToFamilyLink = ChildToFamilyLink {
@@ -182,4 +192,19 @@ data DatePeriod = From | To | FromTo deriving (Show, Eq)
 data PedigreeLinkageType = Adopted | Birth | Foster | Sealing deriving (Show, Eq)
 
 
-mkLabels [ ''Person, ''Name, ''SourceCitation, ''Event, ''Note, ''Family, ''MultimediaLink, ''Data, ''Date, ''ChangeDate, ''UserReferenceNumber, ''SpouseToFamilyLink, ''ChildToFamilyLink ]
+mkLabels [
+    ''Person,
+    ''Name,
+    ''SourceCitation,
+    ''Event,
+    ''Note,
+    ''Family,
+    ''MultimediaLink,
+    ''Data,
+    ''Date,
+    ''ChangeDate,
+    ''UserReferenceNumber,
+    ''SpouseToFamilyLink,
+    ''ChildToFamilyLink,
+    ''Association
+    ]

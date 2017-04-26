@@ -23,7 +23,7 @@ main = hspec $ do
             contents <- readFile "test/TGC55CLF-utf8.ged"
             let tags = splitContent contents
             let (people, families) = parseGEDCOM (head tags) (tail tags) ([], [])
-            sha1Hex (encode people) `shouldBe` "bac1a4dd6501b840dfcdc907e7fccc22692c86a3"
+            sha1Hex (encode people) `shouldBe` "e46ede53dd4ceab770c7fa89db78727e9d340fe2"
             sha1Hex (encode families) `shouldBe` "1446e611d189d06fce528d57abe8d8f385aa977f"
 
 
@@ -435,3 +435,16 @@ main = hspec $ do
                 `shouldBe` newChangeDate {
                                 _changeDate = Just (UTCTime (fromGregorian 2005 07 18) (secondsToDiffTime 0))
                            }
+
+
+    describe "parseAssociation" $
+        it "builds Association record" $ do
+
+            let nextTags = getNextTags    "1 ASSO @I9@\n\
+                                            \2 RELA Has multimedia links\n\
+                                        \1 ALIA @I9@"
+
+            bodyOf (newAssociation "@I9@") 1 nextTags ([], []) id parseAssociation
+                `shouldBe` (newAssociation "@I9@") {
+                                _relationIsDescriptor = Just "Has multimedia links"
+                            }

@@ -7,7 +7,7 @@ import Model
 
 
 instance ToJSON Person where
-    toJSON (Person xref resn names gender childToFamilyLinks spouseToFamilyLinks submitters aliases ancestorsInterests descendantsInterests sourceCitations multimediaLinks notes recordFileNumber ancestralFileNumber recIdNumber personUserReferenceNumbers personChangeDate) =
+    toJSON (Person xref resn names gender childToFamilyLinks spouseToFamilyLinks submitters associations aliases ancestorsInterests descendantsInterests sourceCitations multimediaLinks notes recordFileNumber ancestralFileNumber recIdNumber personUserReferenceNumbers personChangeDate) =
         object [
             "xref" .= xref,
             "resn" .= resn,
@@ -19,6 +19,7 @@ instance ToJSON Person where
             "aliases" .= aliases,
             "ancestorsInterests" .= ancestorsInterests,
             "descendantsInterests" .= descendantsInterests,
+            "associations" .= associations,
             "aliases" .= aliases,
             "sourceCitations" .= sourceCitations,
             "multimediaLinks" .= multimediaLinks,
@@ -77,6 +78,15 @@ instance ToJSON Name where
             "nsfx" .= nsfx,
             "sourceCitations" .= sourceCitations,
             "notes" .= notes
+        ]
+
+instance ToJSON Association where
+    toJSON (Association xref relationIsDescriptor notes sourceCitations) =
+        object [
+            "xref" .= xref,
+            "relationIsDescriptor" .= relationIsDescriptor,
+            "notes" .= notes,
+            "sourceCitations" .= sourceCitations
         ]
 
 instance ToJSON SourceCitation where
