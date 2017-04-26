@@ -30,8 +30,8 @@ parseBody obj startLevel nextTags result continue parse
     (level, tag, value) = head nextTags
 
 
-modifyList continue obj field o = continue $ modify field (++ [o]) obj
-
+modifyList continue obj field val = continue $ modify field (++ [val]) obj
+setField continue obj field val = continue $ set field val obj
 
 
 parseGEDCOM (level, xref, tag) nextTags result
@@ -69,16 +69,16 @@ parsePerson obj (level, tag, value) nextTags result continue
     | tag == "DESI" = modifyList' descendantsInterests value
     | tag == "OBJE" = modifyList'' personMultimediaLinks newMultimediaLink parseMultimediaLink
     | tag `elem` ["SOUR", "NOTE"] = parseCommon2 obj (level, tag, value) nextTags result continue personSourceCitations personNotes
-    | tag == "RFN" = setField recordFileNumber value
-    | tag == "AFN" = setField ancestralFileNumber value
+    | tag == "RFN" = setField'' recordFileNumber value
+    | tag == "AFN" = setField'' ancestralFileNumber value
     | tag == "REFN" = modifyList'' personUserReferenceNumbers newUserReferenceNumber parseUserReferenceNumber
-    | tag == "RIN" = setField recIdNumber (read value :: Int)
-    | tag == "CHAN" = parseBody' personChangeDate setField newChangeDate parseChangeDate
+    | tag == "RIN" = setField'' recIdNumber (read value :: Int)
+    | tag == "CHAN" = parseBody' personChangeDate setField'' newChangeDate parseChangeDate
     | otherwise = continue obj
     where
     parseBody' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
-    setField' field val = continue $ set field val obj
-    setField field val = setField' field (Just val)
+    setField' = setField continue obj
+    setField'' field val = setField' field (Just val)
     modifyList' = modifyList continue obj
     modifyList'' field newObjFun = parseBody' field modifyList' (newObjFun value)
 
@@ -141,22 +141,23 @@ parseName obj (level, tag, value) nextTags result continue
 
 
 parseSourceCitation obj (level, tag, value) nextTags result continue
-    | tag == "PAGE" = setField page (read value :: Int)
-    | tag == "EVEN" = parseBody' event setField (newEvent (parseEventType value) value) parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
+    | tag == "PAGE" = setField'' page (read value :: Int)
+    | tag == "EVEN" = parseBody' event setField'' (newEvent (parseEventType value) value) parseEvent -- EVEN [  <EVENT_TYPE_INDIVIDUAL> | <EVENT_TYPE_FAMILY> | <ATTRIBUTE_TYPE> ]        -- ATTRIBUTE_TYPE: = {Size=1:4}               [ CAST | EDUC | NATI | OCCU | PROP | RELI | RESI | TITL ]
     | tag == "NOTE" = parseNOTE obj level value nextTags result continue hasXref hasText srcNotes
     | tag `elem` ["CONC", "CONT"] = parseCommon obj tag value continue description
-    | tag == "TEXT" = parseBody' srcTexts modifyList value parseText
-    | tag == "QUAY" = setField dataQuality (parseCertaintyAssessment value)
+    | tag == "TEXT" = parseBody' srcTexts modifyList' value parseText
+    | tag == "QUAY" = setField'' dataQuality (parseCertaintyAssessment value)
     | tag == "OBJE" = modifyList'' srcMultimediaLinks newMultimediaLink parseMultimediaLink
-    | tag == "DATA" = parseBody' dat setField newData parseData
+    | tag == "DATA" = parseBody' dat setField'' newData parseData
     | otherwise = continue obj
     where
     hasXref = head value == '@'
     hasText = head value /= '@'
-    modifyList field o = continue $ modify field (++ [o]) obj
-    setField field val = continue $ set field (Just val) obj
     parseBody' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
-    modifyList'' field newObjFun = parseBody' field modifyList (newObjFun value)
+    setField' = setField continue obj
+    setField'' field val = setField' field (Just val)
+    modifyList' = modifyList continue obj
+    modifyList'' field newObjFun = parseBody' field modifyList' (newObjFun value)
 
 
 parseData obj (level, tag, value) nextTags result continue
