@@ -51,9 +51,9 @@ parseTopLevel (level, xref, tag) nextTags result continue
 
 
 parsePerson obj (level, tag, value) nextTags result continue
-    | tag == "RESN" = continue $ set resn (parseResn value) obj
+    | tag == "RESN" = setField' resn (parseResn value)
     | tag == "NAME" = modifyList' names newName parseName
-    | tag == "SEX" = continue $ set gender (parseGender value) obj
+    | tag == "SEX" = setField' gender (parseGender value)
 --     +1 <<INDIVIDUAL_EVENT_STRUCTURE>>  {0:M}
 --     +1 <<INDIVIDUAL_ATTRIBUTE_STRUCTURE>>  {0:M}
 --     +1 <<LDS_INDIVIDUAL_ORDINANCE>>  {0:M}
@@ -74,7 +74,8 @@ parsePerson obj (level, tag, value) nextTags result continue
     | otherwise = continue obj
     where
     modifyList field o = continue $ modify field (++ [o]) obj
-    setField field val = continue $ set field (Just val) obj
+    setField' field val = continue $ set field val obj
+    setField field val = setField' field (Just val)
     bodyOf' field setFieldFun newObj = parseBody newObj level (tail nextTags) result (setFieldFun field)
     modifyList' field newObjFun = bodyOf' field modifyList (newObjFun value)
 
