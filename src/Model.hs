@@ -155,8 +155,9 @@ data Note = Note {
     _noteSourceCitations :: [SourceCitation]
 } deriving (Show, Eq)
 
-newNote1 xref = Note (Just xref) "" []
-newNote2 submitterText = Note Nothing submitterText []
+newNote value
+    | head value == '@' = Note (Just value) "" []
+    | otherwise = Note Nothing value []
 
 
 data Date = Date {

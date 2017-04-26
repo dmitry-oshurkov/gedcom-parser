@@ -79,20 +79,20 @@ main = hspec $ do
                                 _gender = Female,
                                 _childToFamilyLinks = [ (newChildToFamilyLink "@ADOPTIVE_PARENTS@") {
                                                                 _ctflPedigreeLinkageType = Just Adopted,
-                                                                _ctflNotes = [ newNote2 "Note about the link to his adoptive parents family record." ]
+                                                                _ctflNotes = [ newNote "Note about the link to his adoptive parents family record." ]
                                                         }
                                 ],
-                                _spouseToFamilyLinks = [ (newSpouseToFamilyLink "@FAMILY1@") { _stflNotes = [ newNote2 "Note about the link to the family record with his first spouse.", newNote2 "Another note about the link to the family record with his first spouse." ] } ],
+                                _spouseToFamilyLinks = [ (newSpouseToFamilyLink "@FAMILY1@") { _stflNotes = [ newNote "Note about the link to the family record with his first spouse.", newNote "Another note about the link to the family record with his first spouse." ] } ],
                                 _submitters = [ "@SUBMITTER@" ],
                                 _aliases = [ "@I9@" ],
                                 _ancestorsInterests = [ "@SUBMITTER@" ],
                                 _descendantsInterests = [ "@SUBMITTER@" ],
-                                _personNotes = [ newNote1 "@N31@" ],
+                                _personNotes = [ newNote "@N31@" ],
                                 _recordFileNumber = Just "Record File Number",
                                 _ancestralFileNumber = Just "Ancestral File Number",
                                 _personChangeDate = Just newChangeDate {
                                                                 _changeDate = Just (UTCTime (fromGregorian 2001 01 11) (secondsToDiffTime 18486)),
-                                                                _changeNotes = [ newNote2 "This date is the last time this record was changed" ]
+                                                                _changeNotes = [ newNote "This date is the last time this record was changed" ]
                                                             },
                                 _personUserReferenceNumbers = [ (newUserReferenceNumber "User Reference Number") { _refnType = Just "User Reference Type" } ],
                                 _recIdNumber = Just 8
@@ -161,7 +161,7 @@ main = hspec $ do
                 parseBody (newSourceCitation "This source i") 1 nextTags ([], []) id parseSourceCitation
                     `shouldBe` (newSourceCitation "This source is embedded\nin the record") {
 
-                                   _srcNotes = [ newNote1 "@N17@" ],
+                                   _srcNotes = [ newNote "@N17@" ],
                                    _srcTexts = [ "Text from a source. The preferred approach is to cite sources bylinks to SOURCE records.\nHere is a new line of text from the source." ],
                                    _dataQuality = Just Unreliable,
                                    _dat = Just newData {
@@ -181,7 +181,7 @@ main = hspec $ do
                 let nextTags = [
                                 (4, "FILE", "ImgFile.JPG")
                             ]
-                parseBody (newNote1 "@N26@") 4 nextTags ([], []) id parseNote
+                parseBody (newNote "@N26@") 4 nextTags ([], []) id parseNote
                     `shouldBe` Note (Just "@N26@") "" []
 
         context "on second case" $
@@ -205,7 +205,7 @@ main = hspec $ do
                                 (3, "CONT", "NOTE: many applications are confused by two NAME structures."),
                                 (1, "SEX", "M")
                             ]
-                parseBody (newNote2 "These are notes about the first NAME structure in this record. These notes are ") 2 nextTags ([], []) id parseNote
+                parseBody (newNote "These are notes about the first NAME structure in this record. These notes are ") 2 nextTags ([], []) id parseNote
                     `shouldBe` Note Nothing "These are notes about the first NAME structure in this record. These notes are embedded in the INDIVIDUAL record itself.\n\nThe second name structure in this record uses all possible tags for a personal name structure.\n\nNOTE: many applications are confused by two NAME structures." []
 
 
@@ -228,14 +228,14 @@ main = hspec $ do
                                     (newSourceCitation "@SOURCE1@") {
 
                                         _page = Just 55,
-                                        _srcNotes = [ newNote1 "@N7@" ],
+                                        _srcNotes = [ newNote "@N7@" ],
                                         _srcMultimediaLinks = [ (newMultimediaLink "") {
-                                                                    _notes = [ newNote1 "@N26@" ]
+                                                                    _notes = [ newNote "@N26@" ]
                                                                 }
                                         ]
                                     }
                                 ],
-                                _nameNotes = [ newNote2 "This" ]
+                                _nameNotes = [ newNote "This" ]
                             }
 
 
@@ -386,7 +386,7 @@ main = hspec $ do
                                 _format = Just Jpeg,
                                 _descriptiveTitle = Just "Multimedia link about this source",
                                 _multimediaFileReference = Just "ImgFile.JPG",
-                                _notes = [ newNote1 "@N26@" ]
+                                _notes = [ newNote "@N26@" ]
                            }
 
 
