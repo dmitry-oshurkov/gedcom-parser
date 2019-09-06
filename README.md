@@ -4,8 +4,6 @@ GEDCOM parser
 =======================
 
 * Homepage: https://dmitry-oshurkov.github.io/gedcom-parser/
-* https://bitbucket.org/dmitry-oshurkov/gedcom-parser (primary)
-* https://github.com/dmitry-oshurkov/gedcom-parser (mirror)
 
 This is a Haskell implementation of a GEDCOM file parser.
 A GEDCOM file is plain text (usually either ANSEL or ASCII) containing genealogical information about individuals, and meta data linking these records together.
